@@ -1,0 +1,35 @@
+<h1>Listing for <%= @piece.title %> by <%= @piece.artist %> (<%= @piece.date %>) </h1>
+<p>
+  <strong>Site:</strong>
+  <%= @listing.site %>
+</p>
+
+<p>
+  <strong>Link:</strong>
+  <%= @listing.link %>
+</p>
+
+<p>
+  <strong>Start Date:</strong>
+  <%= @listing.start_datetime %>
+</p>
+
+<p>
+  <strong>Sold Date:</strong>
+  <%= if !@listing.sold_datetime.nil? then @listing.sold_datetime else 'Not yet sold.' end %>
+</p>
+
+<p>
+  <strong>Start Price:</strong>
+  $<%= '%.2f' % @listing.start_price %>
+</p>
+
+<p>
+  <strong>Sale Price:</strong>
+  $<%= if !@listing.sale_price.nil? then '%.2f' % @listing.start_price else 'Not yet sold.' end %>
+</p>
+
+<%= link_to 'Edit Listing', edit_piece_listing_url(@piece, @listing) %><br>
+<%= link_to 'Piece', piece_url(@piece) %><br>
+<%= link_to 'All listings for this piece', piece_listings_url(@piece) %><br>
+<%= link_to 'Home', home_index_url %>

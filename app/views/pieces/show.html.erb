@@ -1,0 +1,38 @@
+<p>
+  <strong>Title:</strong>
+  <%= @piece.title %>
+</p>
+
+<p>
+  <strong>Artist:</strong>
+  <%= @piece.artist %>
+</p>
+
+<% if !@piece.print_number.empty? then %>
+<p>
+  <strong>Print Number:</strong>
+  <%= @piece.print_number %>
+</p>
+<% end %>
+
+<p>
+  <strong>Date:</strong>
+  <%= @piece.date %>
+</p>
+
+<p>
+  <strong>Purchase Price:</strong>
+  $<%= '%.2f' % @piece.purchase_price %>
+</p>
+
+<% if !@piece.picture.empty? then %>
+<p>
+  <strong>Picture:</strong>
+  <%= @piece.picture %>
+</p>
+<% end %>
+
+<%= link_to 'Edit Piece', edit_piece_url(@piece) %>
+<%= link_to 'Create new listing', new_piece_listing_url(@piece) %>
+<%= link_to 'View all pieces', pieces_url %>
+<%= link_to 'Home', home_index_url %>

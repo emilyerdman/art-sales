@@ -1,0 +1,12 @@
+<h1>Edit Buyer</h1>
+<%= form_with model: @buyer, method: :put, local:true do |form| %>
+
+  <%= render 'shared/errors', instance: @buyer %>
+
+  <%= render 'form', form: form %>
+
+  <p>
+    <%= form.submit 'Submit Changes' %>
+  </p>
+
+<% end %>

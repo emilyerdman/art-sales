@@ -1,0 +1,12 @@
+<h1>Add a New Piece</h1>
+<%= form_with model: @piece, local: true do |form| %>
+
+  <%= render 'shared/errors', instance: @piece %>
+  
+  <%= render 'form', form: form %>
+  
+  <p>
+    <%= form.submit %>
+  </p>
+
+<% end %>

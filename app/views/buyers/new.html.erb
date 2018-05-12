@@ -1,0 +1,12 @@
+<h1>Add a New Buyer</h1>
+<%= form_with model: @buyer, local: true do |form| %>
+
+  <%= render 'shared/errors', instance: @buyer %>
+  
+  <%= render 'form', form: form %>
+
+  <p>
+    <%= form.submit %>
+  </p>
+
+<% end %>

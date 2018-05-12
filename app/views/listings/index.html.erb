@@ -1,0 +1,24 @@
+<h1>Listings for <%= @piece.title %> </h1>
+
+<table>
+  <tr>
+    <th>Site</th>
+    <th>Link</th>
+    <th>Start Date</th>
+    <th>Sold Date</th>
+    <th>Start Price</th>
+    <th>Sale Price</th>
+  </tr>
+  
+  <% @piece.listings.each do |listing| %>
+  <tr>
+    <td><%= listing.site %></td>
+    <td><%= listing.link %></td>
+    <td><%= listing.start_datetime %></td>
+    <td><%= listing.sold_datetime %></td>
+    <td>$<%= '%.2f' % listing.start_price %></td>
+    <td><%= '%.2f' % listing.sale_price %></td>
+    <td><%= link_to 'View', piece_listing_path(@piece.id, listing.id) %></td>
+  </tr>
+  <% end %>
+</table>

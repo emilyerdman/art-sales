@@ -1,0 +1,26 @@
+<h1>Listings</h1>
+
+<table>
+  <tr>
+    <th>Piece</th>
+    <th>Site</th>
+    <th>Link</th>
+    <th>Start Date</th>
+    <th>Sold Date</th>
+    <th>Start Price</th>
+    <th>Sale Price</th>
+  </tr>
+
+  <% @pieces.each do |piece| %>
+  <% if !piece.nil? then piece.listings.each do |listing| %>
+  <tr>
+    <td><%= piece.title %>, <%= piece.artist %> (<%= piece.date %>)</td>
+    <td><%= listing.site %></td>
+    <td><%= listing.link %></td>
+    <td><%= listing.start_datetime %></td>
+    <td><%= listing.sold_datetime %></td>
+    <td>$<%= '%.2f' % listing.start_price %></td>
+    <td>$<%= '%.2f' % listing.sale_price %></td>
+  </tr>
+  <% end end end %>
+</table>
