@@ -1,0 +1,35 @@
+<h1>Works</h1>
+
+<table>
+  <tr>
+    <th>Inventory Number</th>
+    <th>Title</th>
+    <th>Artist</th>
+    <th>Year</th>
+    <th>Type</th>
+    <th>Media</th>
+    <th>Category</th>
+    <th>Dimensions</th>
+    <th>Edition</th>
+    <th>Retail Value</th>
+    <th>Image</th>
+    <th>Frame</th>
+  </tr>
+
+  <% @works.each do |work| %>
+  <tr>
+    <td><%= work.inventory_number %></td>
+    <td><%= work.title %></td>
+    <td><%= work.getArtist %></td>
+    <td><%= work.year %></td>
+    <td><%= work.type %></td>
+    <td><%= work.media %></td>
+    <td><%= work.category %></td>
+    <td><%= work.getDimensions %></td>
+    <td><%= work.getEdition %></td>
+    <td>$<%= '%.2f' % work.retail_value %></td>
+    <td><%= work.getImage %></td>
+    <td><%= work.getFrame %></td>
+  </tr>
+  <% end %>
+</table>
