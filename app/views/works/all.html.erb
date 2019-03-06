@@ -1,35 +1,135 @@
 <h1>Works</h1>
+<h3><%= getPageCount(@page, @total_works, @works_size) %></h3>
+<div>
+  <%= link_to "Inventory Number (ASC)", works_path(filterParams.merge({sort_by: 0, page: 0})) %>
+  <%= link_to "Inventory Number (DESC)", works_path(filterParams.merge({sort_by: 1, page: 0})) %>
+  <%= link_to "Title (ASC)", works_path(filterParams.merge({sort_by: 3, page: 0})) %>
+  <%= link_to "Title (DESC)", works_path(filterParams.merge({sort_by: 2, page: 0})) %>
+  <%= link_to "Retail Value (ASC)", works_path(filterParams.merge({sort_by: 5, page: 0})) %>
+  <%= link_to "Retail Value (DESC)", works_path(filterParams.merge({sort_by: 4, page: 0})) %>
+</div>
 
-<table>
-  <tr>
-    <th>Inventory Number</th>
-    <th>Title</th>
-    <th>Artist</th>
-    <th>Year</th>
-    <th>Type</th>
-    <th>Media</th>
-    <th>Category</th>
-    <th>Dimensions</th>
-    <th>Edition</th>
-    <th>Retail Value</th>
-    <th>Image</th>
-    <th>Frame</th>
-  </tr>
+<%= form_tag({controller: "works", action: "all" }, method: "get", enforce_utf8: false) do %>
 
-  <% @works.each do |work| %>
-  <tr>
-    <td><%= work.inventory_number %></td>
-    <td><%= work.title %></td>
-    <td><%= work.getArtist %></td>
-    <td><%= work.year %></td>
-    <td><%= work.type %></td>
-    <td><%= work.media %></td>
-    <td><%= work.category %></td>
-    <td><%= work.getDimensions %></td>
-    <td><%= work.getEdition %></td>
-    <td>$<%= '%.2f' % work.retail_value %></td>
-    <td><%= work.getImage %></td>
-    <td><%= work.getFrame %></td>
-  </tr>
-  <% end %>
-</table>
+  <div>
+    <%= check_box_tag('category[]', 'NAUTICAL', params[:category].to_s.include?("NAUTICAL")) %>
+    <%= label_tag('category[]NAUTICAL', 'Nautical') %>
+    <%= check_box_tag('category[]', 'TRAVEL', params[:category].to_s.include?("TRAVEL")) %>
+    <%= label_tag('category[]TRAVEL', 'Travel') %>
+    <%= check_box_tag('category[]', 'ASIAN', params[:category].to_s.include?("ASIAN")) %>
+    <%= label_tag('category[]ASIAN', 'Asian') %>
+    <%= check_box_tag('category[]', 'FIGURATIVE', params[:category].to_s.include?("FIGURATIVE")) %>
+    <%= label_tag('category[]FIGURATIVE', 'Figurative') %>
+    <%= check_box_tag('category[]', 'ETHNIC', params[:category].to_s.include?("ETHNIC")) %>
+    <%= label_tag('category[]ETHNIC', 'Ethnic') %>
+    <%= check_box_tag('category[]', 'LANDSCAPE', params[:category].to_s.include?("LANDSCAPE")) %>
+    <%= label_tag('category[]LANDSCAPE', 'Landscape') %>
+    <%= check_box_tag('category[]', 'RELIGIOUS', params[:category].to_s.include?("RELIGIOUS")) %>
+    <%= label_tag('category[]RELIGIOUS', 'Religious') %>
+    <%= check_box_tag('category[]', 'WHIMSICAL', params[:category].to_s.include?("WHIMSICAL")) %>
+    <%= label_tag('category[]WHIMSICAL', 'Whimsical') %>
+    <%= check_box_tag('category[]', 'ABSTRACT', params[:category].to_s.include?("ABSTRACT")) %>
+    <%= label_tag('category[]ABSTRACT', 'Abstract') %>
+    <%= check_box_tag('category[]', 'ANIMALS', params[:category].to_s.include?("ANIMALS")) %>
+    <%= label_tag('category[]ANIMALS', 'Animals') %>
+    <%= check_box_tag('category[]', 'DECORATIVE', params[:category].to_s.include?("DECORATIVE")) %>
+    <%= label_tag('category[]DECORATIVE', 'Decorative') %>
+  </div>
+  <div>
+    <%= check_box_tag('category[]', 'FLORAL', params[:category].to_s.include?("FLORAL")) %>
+    <%= label_tag('category[]FLORAL', 'Floral') %>
+    <%= check_box_tag('category[]', 'REALISM', params[:category].to_s.include?("REALISM")) %>
+    <%= label_tag('category[]REALISM', 'Realism') %>
+    <%= check_box_tag('category[]', 'ARCHITECTURE', params[:category].to_s.include?("ARCHITECTURE")) %>
+    <%= label_tag('category[]ARCHITECTURE', 'Architecture') %>
+    <%= check_box_tag('category[]', 'SPORTS', params[:category].to_s.include?("SPORTS")) %>
+    <%= label_tag('category[]SPORTS', 'Sports') %>
+    <%= check_box_tag('category[]', 'TRANSPORTATION', params[:category].to_s.include?("TRANSPORTATION")) %>
+    <%= label_tag('category[]TRANSPORTATION', 'Transportation') %>
+    <%= check_box_tag('category[]', 'FIBER ART', params[:category].to_s.include?("FIBER ART")) %>
+    <%= label_tag('category[]FIBER ART', 'Fiber Art') %>
+    <%= check_box_tag('category[]', 'STILL LIFE', params[:category].to_s.include?("STILL LIFE")) %>
+    <%= label_tag('category[]STILL LIFE', 'Still Life') %>
+    <%= check_box_tag('category[]', 'PHOTOGRAPHY', params[:category].to_s.include?("PHOTOGRAPHY")) %>
+    <%= label_tag('category[]PHOTOGRAPHY', 'Photography') %>
+    <%= check_box_tag('category[]', 'RURAL', params[:category].to_s.include?("RURAL")) %>
+    <%= label_tag('category[]RURAL', 'Rural') %>
+    <%= check_box_tag('category[]', 'URBAN', params[:category].to_s.include?("URBAN")) %>
+    <%= label_tag('category[]URBAN', 'Urban') %>
+  </div>
+
+  <div>
+    <%= radio_button_tag('category_combo', 'AND', params[:category_combo].eql?("AND")) %>
+    <%= label_tag('category_combo_AND', 'AND') %>
+    <%= radio_button_tag('category_combo', 'OR', params[:category_combo].eql?('OR')) %>
+    <%= label_tag('category_combo_OR', 'OR') %>
+  </div>
+
+  <div>
+    <%= radio_button_tag('art_type', 'POSTER', params[:art_type].eql?("POSTER")) %>
+    <%= label_tag('art_type_POSTER', "Poster") %>
+    <%= radio_button_tag('art_type', 'FINE ART', params[:art_type].eql?("FINE ART")) %>
+    <%= label_tag('art_type_FINE ART', "Fine Art") %>
+    <%= radio_button_tag('art_type', '', !params[:art_type].present?) %>
+    <%= label_tag('art_type', 'All') %>
+  </div>
+  <div>
+    <%= check_box_tag('corp_coll', 'true', params[:corp_coll].eql?("true")) %>
+    <%= label_tag('corp_coll', 'Corporate Collection') %>
+  </div>
+  <div>
+    <%= radio_button_tag('availability', '1', params[:availability].eql?("1")) %>
+    <%= label_tag('availability_SOLD', 'Sold') %>
+    <%= radio_button_tag('availability', '0', params[:availability].eql?("0")) %>
+    <%= label_tag('availability_AVAILABLE', 'Available') %>
+    <%= radio_button_tag('availability', '', !params[:availability].present?) %>
+    <%= label_tag('availability', 'All') %>
+  </div>
+  <%= hidden_field_tag :sort_by, @sort_by %>
+  <%= submit_tag('GO', name: nil) %>
+  <%= link_to 'UNSELECT ALL', works_path(params.permit(:page, :sort_by).merge({page: @page, sort_by: @sort_by}), :class => 'btn') %>
+<% end %>
+
+<% if @works.size > 0 %>
+  <table>
+    <tr>
+      <th>Image</th>
+      <th>Piece Info</th>
+      <th>Inventory No.</th>
+      <th>Type</th>
+      <th>Category</th>
+      <th>Retail Value</th>
+      <th>Frame</th>
+      <th>Available</th>
+      <th>Location</th>
+    </tr>
+
+    <% @works.each do |work| %>
+    <tr>
+      <td><%= image_tag(work.getImageUrl, width: '200', alt: work.title) %></td>
+      <td><%= simple_format(work.getDisplayInfo) %></td>
+      <td><%= work.inventory_number %></td>
+      <td><%= work.art_type %></td>
+      <td><%= work.getCategory %></td>
+      <td>$<%= work.getRetailValue %></td>
+      <td><%= work.getFrame %></td>
+      <td><%= simple_format(work.getAvailability) %> </td>
+      <td><%= simple_format(work.getLocation) %> </td>
+    </tr>
+    <% end %>
+  </table>
+<% else %>
+  <h3>No results found for those filters.</h3>
+<% end %>
+
+<div>
+   <ul class="pager">
+      <li class="previous <%= @page == 0 ? 'disabled' : '' %>">
+          <%= link_to_if @page > 0, "<< Previous", works_path(filterParams.merge({page: @page - 1})) %>
+      </li>
+ 
+      <li class="next">
+          <%= link_to_if ((@page * @works_size) + @works_size) < @total_works, "Next >>", works_path(filterParams.merge({page: @page + 1})) %>
+      </li>
+   </ul>
+</div>

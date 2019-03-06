@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190212214627) do
+ActiveRecord::Schema.define(version: 20190305172518) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,80 +19,25 @@ ActiveRecord::Schema.define(version: 20190212214627) do
     t.string "first_name"
     t.string "last_name"
     t.string "dates"
-    t.string "contact_number"
     t.string "category"
   end
 
-  create_table "buyers", force: :cascade do |t|
-    t.string "name"
-    t.string "address"
-    t.decimal "shipping_cost"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "contacts", force: :cascade do |t|
-    t.string "contact_description"
-    t.string "title"
+    t.string "description"
     t.string "first_name"
     t.string "last_name"
-    t.string "position"
     t.string "institution"
     t.string "address1"
     t.string "address2"
     t.string "city"
     t.string "state_prov"
     t.string "postal_code"
-    t.string "country"
-    t.string "notes"
-  end
-
-  create_table "listings", force: :cascade do |t|
-    t.string "site"
-    t.datetime "start_datetime"
-    t.datetime "sold_datetime"
-    t.string "link"
-    t.decimal "start_price"
-    t.decimal "sale_price"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "piece_id"
-    t.boolean "shipped"
-    t.integer "buyer_id"
-    t.index ["buyer_id"], name: "index_listings_on_buyer_id"
-    t.index ["piece_id"], name: "index_listings_on_piece_id"
-  end
-
-  create_table "media", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "medias", force: :cascade do |t|
-    t.string "media"
-  end
-
-  create_table "pieces", force: :cascade do |t|
-    t.string "title"
-    t.string "artist"
-    t.date "date"
-    t.float "purchase_price"
-    t.string "picture"
-    t.string "print_number"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "types", force: :cascade do |t|
-    t.string "type"
-    t.string "prefix"
   end
 
   create_table "works", force: :cascade do |t|
     t.string "inventory_number"
-    t.integer "artist_number"
     t.string "title"
-    t.string "type"
+    t.string "art_type"
     t.string "full_year"
     t.string "media"
     t.integer "hinw"
@@ -115,6 +60,17 @@ ActiveRecord::Schema.define(version: 20190212214627) do
     t.boolean "framed"
     t.string "frame_condition"
     t.integer "current_owner"
+    t.boolean "sold"
+    t.boolean "erdman"
+    t.bigint "contact_id"
+    t.bigint "artist_id"
+    t.string "location"
+    t.string "bin"
+    t.boolean "corporate_collection"
+    t.index ["artist_id"], name: "index_works_on_artist_id"
+    t.index ["contact_id"], name: "index_works_on_contact_id"
   end
 
+  add_foreign_key "works", "artists"
+  add_foreign_key "works", "contacts"
 end

@@ -1,63 +1,76 @@
 class WorksController < ApplicationController
+  include Arel
+  WORKS_SIZE = 10
+  SORT_BY = 0
 
+  # SORT ORDERS
+  # inventory number asc = 0
+  # inventory number desc = 1
+  # title desc = 2
+  # title asc = 3
+  # artist desc = 4
+  # artist asc = 5
+  # retail value desc = 6
+  # retail value asc = 7
+  
   def all
-    @works = Works.first(25)
-  end
+    @page = (params[:page] || 0).to_i
+    @works_size = WORKS_SIZE
+    @works = Work.all
 
-  private
-  def getArtist
-    artist = Artists.find(self.artist)
-    if artist.nil?
-      return 'UNKNOWN'
-    else
-      return '%s %s' % [artist.first_name, artist.last_name]
+    if params[:art_type].present?
+      @works = @works.art_type_filter(params[:art_type])
     end
-  end
 
-  private 
-  def getDimensions
-    height = self.hinw
-    heightnum = self.hinn
-    heightden = self.hind
-    width = self.winw
-    widthnum = self.winn
-    widthdun = self.wind
-    depth = self.dinw
-    depth = self.dinn
-    depth = self.dind
-    if (!heightnum.nil? || !heightden.nil?) 
-      height = "%s %s/%s" % [height, heightnum, heightden]
+    if params[:availability].present?
+      @works = @works.availability_filter(params[:availability])
     end
-    if (!widthnum.nil? || !widthden.nil?)
-      width = "%s %s/%s" % [width, widthnum, widthden]
+
+    if params[:corp_coll].present?
+      @works = @works.corp_coll_filter
     end
-    if (!depth.nil?)
-      if (!depthnum.nil? || !depthden.nil?)
-        depth = "%s %s/%s" % [depth, depthnum, depthden]
+
+    if params[:category].present?
+      combo = params[:category_combo]
+      if combo.eql?("OR")
+        all_filtered = Work.none
+      else
+        all_filtered = Work.all
       end
-      return "%s'' X %s''" % [height, width]
-    else
-      return "%s'' X %s'' X %s''" % [height, width, depth]
+      params[:category].each do |category|
+        filtered = @works.category_filter(category)
+        puts filtered.count
+        if combo.eql?("OR")
+          all_filtered = filtered.or(all_filtered)
+        else
+          all_filtered = filtered.merge(all_filtered)
+        end
+        puts all_filtered.count
+       end
+      @works = all_filtered
     end
-  end
 
-  private
-  def getEdition
-    return '%s/%s %s' % [self.numerator, self.denominator, self.set]
-  end
-
-  private
-  def getImage
-    return self.image.subString(2)
-  end
-
-  private
-  def getFrame
-    if self.framed
-      return self.frame_condition
-    else
-      return "NO FRAME"
+    @sort_by = (params[:sort_by]).to_i
+    if @sort_by == 0
+      @works = @works.order(inventory_number: :asc)
+    elsif @sort_by == 1
+      @works = @works.order(inventory_number: :desc) 
+    elsif @sort_by == 2
+      @works = @works.order(title: :desc)
+    elsif @sort_by == 3
+      @works = @works.order(title: :asc)
+    elsif @sort_by == 4
+      @works = @works.order(retail_value: :desc).where.not(retail_value: nil)
+    elsif @sort_by == 5
+      @works = @works.order(retail_value: :asc).where.not(retail_value: nil)
     end
+
+    @total_works = @works.size
+    @works = @works.offset(WORKS_SIZE * @page).limit(WORKS_SIZE)
   end
+
+    
+
+
 
 end
