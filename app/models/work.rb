@@ -5,6 +5,7 @@ class Work < ApplicationRecord
   scope :availability_filter, -> (param) { where(sold: param)}
   scope :corp_coll_filter, -> { where(corporate_collection: true)}
   scope :category_filter, -> (param) { where("category LIKE ?", "%#{param}%")}
+  S3_URL = "https://s3.us-east-2.amazonaws.com/works-images/"
 
   def getArtist
     artist = self.artist
@@ -67,10 +68,9 @@ class Work < ApplicationRecord
   def getImageUrl
     if !self.image.nil? && !self.image.empty?
       image_only = self.image[/[^\?]+/]
-      puts "IMAGE = %s" % (image_only)
       image_url = image_only[3..-1].gsub('\\', '/').gsub(']', '').sub('Image', 'image')
       if !ActionController::Base.helpers.resolve_asset_path(image_url).nil?
-        return image_url
+        return '%s%s' % [S3_URL, image_url]
       end
     end
     return 'notfound.png'

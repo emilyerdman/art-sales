@@ -1,8 +1,9 @@
 <h1>Works</h1>
 <h3><%= getPageCount(@page, @total_works, @works_size) %></h3>
 <div>
-  <%= link_to "Inventory Number (ASC)", works_path(filterParams.merge({sort_by: 0, page: 0})) %>
-  <%= link_to "Inventory Number (DESC)", works_path(filterParams.merge({sort_by: 1, page: 0})) %>
+  <p>Sort By: </p>
+  <%= link_to "Inventory No. (ASC)", works_path(filterParams.merge({sort_by: 0, page: 0})) %>
+  <%= link_to "Inventory No. (DESC)", works_path(filterParams.merge({sort_by: 1, page: 0})) %>
   <%= link_to "Title (ASC)", works_path(filterParams.merge({sort_by: 3, page: 0})) %>
   <%= link_to "Title (DESC)", works_path(filterParams.merge({sort_by: 2, page: 0})) %>
   <%= link_to "Retail Value (ASC)", works_path(filterParams.merge({sort_by: 5, page: 0})) %>
@@ -10,7 +11,7 @@
 </div>
 
 <%= form_tag({controller: "works", action: "all" }, method: "get", enforce_utf8: false) do %>
-
+<p>Filter By: </p>
   <div>
     <%= check_box_tag('category[]', 'NAUTICAL', params[:category].to_s.include?("NAUTICAL")) %>
     <%= label_tag('category[]NAUTICAL', 'Nautical') %>
