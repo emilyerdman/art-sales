@@ -5,6 +5,7 @@ class Work < ApplicationRecord
   scope :availability_filter, -> (param) { where(sold: param)}
   scope :corp_coll_filter, -> { where(corporate_collection: true)}
   scope :category_filter, -> (param) { where("category LIKE ?", "%#{param}%")}
+  scope :search_filter, -> (param) {where('category LIKE :search OR title LIKE :search OR media LIKE :search', search: "%#{param.upcase}%")}
   S3_URL = "https://s3.us-east-2.amazonaws.com/works-images/"
 
   def getArtist

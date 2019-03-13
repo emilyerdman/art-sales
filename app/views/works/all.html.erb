@@ -1,6 +1,13 @@
 <h1>Works</h1>
 <h3><%= getPageCount(@page, @total_works, @works_size) %></h3>
 <div>
+  <p>Search Works:</p>
+  <%= form_tag({controller: "works", action: "all"}, method: "get", enforce_utf8: false) do %>
+    <%= text_field_tag('search', params[:search].to_s) %>
+    <%= submit_tag('GO', name: nil) %>
+  <% end %>
+</div>
+<div>
   <p>Sort By: </p>
   <%= link_to "Inventory No. (ASC)", works_path(filterParams.merge({sort_by: 0, page: 0})) %>
   <%= link_to "Inventory No. (DESC)", works_path(filterParams.merge({sort_by: 1, page: 0})) %>
@@ -11,7 +18,13 @@
 </div>
 
 <%= form_tag({controller: "works", action: "all" }, method: "get", enforce_utf8: false) do %>
-<p>Filter By: </p>
+<p>Filter By Category: </p>
+  <div>
+    <%= radio_button_tag('category_combo', 'AND', params[:category_combo].eql?("AND")) %>
+    <%= label_tag('category_combo_AND', 'AND') %>
+    <%= radio_button_tag('category_combo', 'OR', params[:category_combo].eql?('OR')) %>
+    <%= label_tag('category_combo_OR', 'OR') %>
+  </div>
   <div>
     <%= check_box_tag('category[]', 'NAUTICAL', params[:category].to_s.include?("NAUTICAL")) %>
     <%= label_tag('category[]NAUTICAL', 'Nautical') %>
@@ -59,13 +72,7 @@
     <%= label_tag('category[]URBAN', 'Urban') %>
   </div>
 
-  <div>
-    <%= radio_button_tag('category_combo', 'AND', params[:category_combo].eql?("AND")) %>
-    <%= label_tag('category_combo_AND', 'AND') %>
-    <%= radio_button_tag('category_combo', 'OR', params[:category_combo].eql?('OR')) %>
-    <%= label_tag('category_combo_OR', 'OR') %>
-  </div>
-
+<p>Additional Filters:</p>
   <div>
     <%= radio_button_tag('art_type', 'POSTER', params[:art_type].eql?("POSTER")) %>
     <%= label_tag('art_type_POSTER', "Poster") %>
@@ -88,7 +95,7 @@
   </div>
   <%= hidden_field_tag :sort_by, @sort_by %>
   <%= submit_tag('GO', name: nil) %>
-  <%= link_to 'UNSELECT ALL', works_path(params.permit(:page, :sort_by).merge({page: @page, sort_by: @sort_by}), :class => 'btn') %>
+  <%= link_to 'UNSELECT ALL', works_path(params.permit(:sort_by).merge({sort_by: @sort_by})) %>
 <% end %>
 
 <% if @works.size > 0 %>

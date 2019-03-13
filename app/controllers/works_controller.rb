@@ -30,6 +30,14 @@ class WorksController < ApplicationController
       @works = @works.corp_coll_filter
     end
 
+    if params[:search].present?
+      works_filtered = @works.search_filter(params[:search])
+      puts Artist.artist_filter(params[:search]).size
+      contacts_filtered = @works.where(artist_id: Artist.artist_filter(params[:search]))
+      puts contacts_filtered
+      @works = works_filtered.or(contacts_filtered)
+    end
+
     if params[:category].present?
       combo = params[:category_combo]
       if combo.eql?("OR")
