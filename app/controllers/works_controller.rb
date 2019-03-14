@@ -78,6 +78,11 @@ class WorksController < ApplicationController
   end
 
     
+  def show
+    @work = Work.find(params[:id])
+    @artist = Artist.find(@work.artist_id)
+    @contact = Contact.find_by_id(@work.contact_id)
+  end
 
 
 

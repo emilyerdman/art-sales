@@ -114,7 +114,7 @@
 
     <% @works.each do |work| %>
     <tr>
-      <td><%= image_tag(work.getImageUrl, width: '200', alt: work.title) %></td>
+      <td><%= link_to(image_tag(work.getImageUrl, width: '200', alt: work.title), work) %></td>
       <td><%= simple_format(work.getDisplayInfo) %></td>
       <td><%= work.inventory_number %></td>
       <td><%= work.art_type %></td>

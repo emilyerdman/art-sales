@@ -73,7 +73,7 @@ work_csv.each do |row|
   w.retail_value = row['RetailValue']
   w.category = row['Category']
   w.image = row['Image']
-  w.framed = row['Framed']
+  w.framed = if row['Framed'] == '0' then false else true end
   w.frame_condition = row['FrameCondition']
   w.current_owner = row['CurrentOwner'] # 0 = no current owner, anything else is contact_id
   if row['SoldTo'] != "-1"
