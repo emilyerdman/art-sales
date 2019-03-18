@@ -5,7 +5,7 @@ class Work < ApplicationRecord
   scope :availability_filter, -> (param) { where(sold: param)}
   scope :corp_coll_filter, -> { where(corporate_collection: true)}
   scope :category_filter, -> (param) { where("category LIKE ?", "%#{param}%")}
-  scope :search_filter, -> (param) {where('category LIKE :search OR title LIKE :search OR media LIKE :search', search: "%#{param.upcase}%")}
+  scope :search_filter, -> (param) {where('category LIKE :search OR title LIKE :search OR media LIKE :search OR inventory_number LIKE :search', search: "%#{param.upcase}%")}
   S3_URL = "https://s3.us-east-2.amazonaws.com/works-images/"
 
   def getArtist
@@ -69,10 +69,9 @@ class Work < ApplicationRecord
   def getImageUrl
     if !self.image.nil? && !self.image.empty?
       image_only = self.image[/[^\?]+/]
-      image_url = image_only[3..-1].gsub('\\', '/').gsub(']', '').sub('Image', 'image')
-      if !ActionController::Base.helpers.resolve_asset_path(image_url).nil?
-        return '%s%s' % [S3_URL, image_url]
-      end
+      image_url = image_only[3..-1].gsub('\\', '/').gsub(']', '').sub('Image', 'image').sub('.JPG', '.jpg')
+      aws_url = '%s%s' % [S3_URL, image_url]
+      return aws_url
     end
     return 'notfound.png'
   end
@@ -92,10 +91,10 @@ class Work < ApplicationRecord
   end
 
   def getRetailValue
-    if self.retail_value.blank?
+    if self.retail_value.blank? || self.retail_value == 0.0
       return 'Unknown'
     else
-      return '%.2f' % self.retail_value
+      return '$%.2f' % self.retail_value
     end
   end
 
@@ -112,9 +111,8 @@ class Work < ApplicationRecord
   end
 
   def getDisplayInfo
-    info = "%s\n\n%s%s\n\n%s\n\n%s" % 
-      [self.getArtist, 
-        self.title, 
+    info = "%s%s\n\n%s\n\n%s" % 
+      [self.title, 
         if self.full_year.blank? 
           '' 
         else ', '+self.full_year 

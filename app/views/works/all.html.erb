@@ -115,11 +115,11 @@
     <% @works.each do |work| %>
     <tr>
       <td><%= link_to(image_tag(work.getImageUrl, width: '200', alt: work.title), work) %></td>
-      <td><%= simple_format(work.getDisplayInfo) %></td>
+      <td><%= link_to(work.getArtist, work.artist) %><br/><%= simple_format(work.getDisplayInfo) %></td>
       <td><%= work.inventory_number %></td>
       <td><%= work.art_type %></td>
       <td><%= work.getCategory %></td>
-      <td>$<%= work.getRetailValue %></td>
+      <td><%= work.getRetailValue %></td>
       <td><%= work.getFrame %></td>
       <td><%= simple_format(work.getAvailability) %> </td>
       <td><%= simple_format(work.getLocation) %> </td>

@@ -2,8 +2,8 @@
   <%= image_tag(@work.getImageUrl, width: '500', alt: @work.title) %>
 </div>
 <div>
-    <p><%= simple_format(@work.getDisplayInfo) %></p>
-  <p>Value: $<%= @work.getRetailValue %></p>
+    <p><%= link_to(@work.getArtist, @work.artist) %><br/><%= simple_format(@work.getDisplayInfo) %></p>
+  <p>Value: <%= @work.getRetailValue %></p>
   <p><% if @work.framed then 'FRAMED' else 'UNFRAMED' end %> <%= @work.art_type %></p>
   <% if @work.framed %>
     <p>Frame Type: <%= @work.getFrame %></p>
