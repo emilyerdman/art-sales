@@ -10,6 +10,8 @@
   <p>Search Works:</p>
   <%= form_tag({controller: "works", action: "all"}, method: "get", enforce_utf8: false) do %>
     <%= text_field_tag('search', params[:search].to_s.strip) %>
+    <%= hidden_field_tag :numworks, @numworks %>
+    <%= hidden_field_tag :sort_by, @sort_by %>
     <%= submit_tag('GO', name: nil) %>
   <% end %>
 </div>
@@ -106,7 +108,7 @@
   <%= hidden_field_tag :sort_by, @sort_by %>
   <%= hidden_field_tag :numworks, @numworks %>
   <%= submit_tag('GO', name: nil) %>
-  <%= link_to 'UNSELECT ALL', works_path(params.permit(:sort_by).merge({sort_by: @sort_by})) %>
+  <%= link_to 'UNSELECT ALL', works_path(params.permit(:sort_by, :numworks).merge({sort_by: @sort_by, numworks: @numworks})) %>
 <% end %>
 
 <% if @works.size > 0 %>
