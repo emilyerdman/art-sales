@@ -1,9 +1,15 @@
 <h1>Works</h1>
-<h3><%= getPageCount(@page, @total_works, @works_size) %></h3>
+<h3><%= getPageCount(@page, @total_works, @numworks) %></h3>
 <div>
+  <%= form_tag({controller: "works", action: "all"}, method: "get", enforce_utf8: false) do %>
+  <p>List 
+    <%= select_tag('numworks', options_for_select([ "10", "25", "50", "100" ], params[:numworks])) %>
+  works per page
+    <%= submit_tag('GO', name: nil) %></p>
+  <% end %>
   <p>Search Works:</p>
   <%= form_tag({controller: "works", action: "all"}, method: "get", enforce_utf8: false) do %>
-    <%= text_field_tag('search', params[:search].to_s) %>
+    <%= text_field_tag('search', params[:search].to_s.strip) %>
     <%= submit_tag('GO', name: nil) %>
   <% end %>
 </div>
@@ -93,7 +99,12 @@
     <%= radio_button_tag('availability', '', !params[:availability].present?) %>
     <%= label_tag('availability', 'All') %>
   </div>
+  <div>
+    <%= check_box_tag('unique', 'true', params[:unique].eql?('true')) %>
+    <%= label_tag('Unique', 'unique') %>
+  </div>
   <%= hidden_field_tag :sort_by, @sort_by %>
+  <%= hidden_field_tag :numworks, @numworks %>
   <%= submit_tag('GO', name: nil) %>
   <%= link_to 'UNSELECT ALL', works_path(params.permit(:sort_by).merge({sort_by: @sort_by})) %>
 <% end %>
@@ -131,13 +142,13 @@
 <% end %>
 
 <div>
-   <ul class="pager">
-      <li class="previous <%= @page == 0 ? 'disabled' : '' %>">
+   <ul class="pager" style="padding-left:10px">
+      <li class="previous <%= @page == 0 ? 'disabled' : '' %>" style="display:inline;padding-right:25px">
           <%= link_to_if @page > 0, "<< Previous", works_path(filterParams.merge({page: @page - 1})) %>
       </li>
- 
-      <li class="next">
-          <%= link_to_if ((@page * @works_size) + @works_size) < @total_works, "Next >>", works_path(filterParams.merge({page: @page + 1})) %>
+      <span/>
+      <li class="next" style="display:inline">
+          <%= link_to_if ((@page * @numworks) + @numworks) < @total_works, "Next >>", works_path(filterParams.merge({page: @page + 1})) %>
       </li>
    </ul>
 </div>

@@ -73,7 +73,7 @@ class Work < ApplicationRecord
       aws_url = '%s%s' % [S3_URL, image_url]
       return aws_url
     end
-    return 'notfound.png'
+    return '%s%s' % [S3_URL, 'notfound.png']
   end
   
   def getFrame

@@ -1,6 +1,6 @@
 class WorksController < ApplicationController
   include Arel
-  WORKS_SIZE = 10
+  NUM_WORKS = 10
   SORT_BY = 0
 
   # SORT ORDERS
@@ -15,7 +15,7 @@ class WorksController < ApplicationController
   
   def all
     @page = (params[:page] || 0).to_i
-    @works_size = WORKS_SIZE
+    @numworks = (params[:numworks] || NUM_WORKS).to_i
     @works = Work.all
 
     if params[:art_type].present?
@@ -73,8 +73,12 @@ class WorksController < ApplicationController
       @works = @works.order(retail_value: :asc).where.not(retail_value: nil)
     end
 
+    if params[:unique].present?
+      @works = @works.select('DISTINCT(title)')
+    end
+
     @total_works = @works.size
-    @works = @works.offset(WORKS_SIZE * @page).limit(WORKS_SIZE)
+    @works = @works.offset(@numworks * @page).limit(@numworks)
   end
 
     
