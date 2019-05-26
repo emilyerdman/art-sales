@@ -1,5 +1,4 @@
 class WorksController < ApplicationController
-  include Arel
   NUM_WORKS = 10
   SORT_BY = 0
 
@@ -17,6 +16,7 @@ class WorksController < ApplicationController
     @page = (params[:page] || 0).to_i
     @numworks = (params[:numworks] || NUM_WORKS).to_i
     @works = Work.all
+    @category_combo = (params[:category_combo] || "AND")
 
     if params[:art_type].present?
       @works = @works.art_type_filter(params[:art_type])
@@ -26,15 +26,20 @@ class WorksController < ApplicationController
       @works = @works.availability_filter(params[:availability])
     end
 
-    if params[:corp_coll].present?
-      @works = @works.corp_coll_filter
+    # filter by corporate collection/noncorporate
+    if params[:collection].present?
+      if params[:collection].eql?('CORP')
+        @works = @works.corp_coll_filter(true)
+      elsif params[:collection].eql?('NONCORP')
+        @works = @works.corp_coll_filter(false)
+      end
     end
 
+    # search causes other filters to reset
     if params[:search].present?
-      works_filtered = @works.search_filter(params[:search])
-      puts Artist.artist_filter(params[:search]).size
-      contacts_filtered = @works.where(artist_id: Artist.artist_filter(params[:search]))
-      puts contacts_filtered
+      stripped_param = params[:search].strip.downcase
+      works_filtered = @works.search_filter(stripped_param)
+      contacts_filtered = @works.where(artist_id: Artist.artist_filter(stripped_param))
       @works = works_filtered.or(contacts_filtered)
     end
 

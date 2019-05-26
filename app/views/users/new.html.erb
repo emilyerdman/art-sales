@@ -1,0 +1,79 @@
+<h1>New User</h1>
+
+<%=form_with(model: @user, local: true) do |form| %>
+  <% if @user.errors.any? %>
+   <div id="error_explanation">
+    <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+      <ul>
+      <% @user.errors.full_messages.each do |message| %>
+      <li>
+        <%=message %>
+      </li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+ <div class="fields">
+      <div class="six wide field">
+          <%=form.label :first_name %>
+          <%=form.text_field :first_name, id: :user_first_name %>
+      </div>
+
+      <div class="six wide required field">
+          <%=form.label :last_name %>
+          <%=form.text_field :last_name, id: :user_last_name %>
+      </div>
+  </div>
+  <div class="four wide field">
+      <%=form.label :email %>
+      <%=form.email_field :email, id: :user_email %>
+  </div>
+
+  <div class="four wide field">
+      <%=form.label :phone %>
+      <%=form.telephone_field :phone, id: :user_phone %>
+  </div>
+
+  <div class='four wide field'>
+    <%= form.label :company %>
+    <%= form.text_field :company, id: :user_company %>
+  </div>
+<!-- #### ADDRESS FIELD STARTS HERE #### -->
+<div class="fields">
+    <%=form.fields_for :address do |a| %>
+        <div class="field">
+            <label>Street address </label>
+            <%= a.text_field :street_address, id: :street_address %>
+        </div>
+        <div class="field">
+            <label>City </label>
+            <%= a.text_field :city, id: :city %>
+        </div>
+        <div class="two wide field">
+            <label>State </label>
+            <%=a .text_field :state, id: :state %>
+        </div>
+
+        <div class="field">
+            <label>Zip </label>
+            <%= a.text_field :zip_code, id: :zip_code %>
+        </div>
+
+        <div class='field'>
+          <label>Country</label>
+          <%= a.text_field :country, id: :country %>
+        </div>
+</div>
+<%end%><!-- #### ADDRESS FIELD ENDS HERE #### -->
+<div class='field'>
+  <%= form.label :password %>
+  <%= form.password_field :password, id: :user_password %>
+</div>
+
+
+<br>
+<div class="actions">
+    <%=form.submit 'Submit' %>
+</div>
+<% end %>
+<%= link_to 'Back', users_path %>

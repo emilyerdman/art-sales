@@ -1,1 +1,10 @@
-<h1><%= link_to('Erdman Art Group', works_path) %></h1>
+<div>
+  <h1><%= link_to('Erdman Art Group', works_path) %></h1>
+<% if current_user %>
+  <h3><%= link_to('View Profile', user_path(current_user)) %></h3>
+  <h3><%= link_to('Logout', logout_path) %></h3>
+<% else %>
+  <h3><%= link_to('Login', login_path) %></h3>
+  <h3><%= link_to('Create User', new_user_path) %></h3>
+<% end %>
+</div>
