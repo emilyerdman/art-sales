@@ -3,8 +3,12 @@
 <% if current_user %>
   <h3><%= link_to('View Profile', user_path(current_user)) %></h3>
   <h3><%= link_to('Logout', logout_path) %></h3>
+  <% if current_user.admin! %>
+    <h3><%= link_to('Admin Panel', users_path) %></h3>
+  <% end %>
 <% else %>
   <h3><%= link_to('Login', login_path) %></h3>
   <h3><%= link_to('Create User', new_user_path) %></h3>
 <% end %>
+
 </div>

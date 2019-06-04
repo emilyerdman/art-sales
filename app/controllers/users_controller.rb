@@ -1,15 +1,24 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :approve, :disapprove, :change_user_category]
+
 
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+    puts User.categories
+    if current_user && current_user.admin!
+      @users = User.all.order(:id)
+    else
+      render file: "#{Rails.root}/public/404", status: :not_found
+    end
   end
 
   # GET /users/1
   # GET /users/1.json
   def show
+    if current_user != @user
+      render file: "#{Rails.root}/public/404", status: :not_found
+    end
   end
 
   # GET /users/new
@@ -19,17 +28,21 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    if current_user != @user
+      render file: "#{Rails.root}/public/404", status: :not_found
+    end
   end
 
   # POST /users
   # POST /users.json
   def create
     @user = User.new(user_params)
+    @user.approved = false
+
     if @user.save
+      log_in @user
       redirect_to @user
-      puts @user
     else
-      puts @user
       render 'new'
     end
   end
@@ -37,24 +50,49 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
-    respond_to do |format|
-      if @user.update(user_params)
-        format.html { redirect_to @user, notice: 'User was successfully updated.' }
-        format.json { render :show, status: :ok, location: @user }
-      else
-        format.html { render :edit }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    if current_user == @user && @user.update(user_params)
+      format.html { redirect_to @user, notice: 'User was successfully updated.' }
+      format.json { render :show, status: :ok, location: @user }
+    else
+      format.html { render :edit }
+      format.json { render json: @user.errors, status: :unprocessable_entity }
     end
   end
 
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
-    @user.destroy
-    respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
-      format.json { head :no_content }
+    if current_user == @user
+      @user.destroy
+      log_out
+      redirect_to root_url
+    elsif current_user.admin!
+      @user.destroy
+      redirect_to users_path
+    else
+      render file: "#{Rails.root}/public/404", status: :not_found
+    end
+  end
+
+  def approve
+    @user.approve_user(true)
+    redirect_to users_path
+  end
+
+  def disapprove
+    @user.approve_user(false)
+    redirect_to users_path
+  end
+
+  def change_user_category
+    begin
+      puts @user
+      @user.change_user_category(params[:category])
+      redirect_to users_path
+    rescue StandardError => e
+      puts e
+      @error = e
+      render file: "#{Rails.root}/public/404", status: :not_found
     end
   end
 
@@ -66,6 +104,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:email, :password, :password_confirmation, :first_name, :last_name, :phone, :address, :company)
+      params.require(:user).permit(:email, :first_name, :last_name, :password, :password_confirmation, :phone, :company, address: [:street_address, :city, :state, :zip_code, :country])
     end
 end

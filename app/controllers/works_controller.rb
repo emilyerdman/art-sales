@@ -15,20 +15,30 @@ class WorksController < ApplicationController
   def all
     @page = (params[:page] || 0).to_i
     @numworks = (params[:numworks] || NUM_WORKS).to_i
-    @works = Work.all
     @category_combo = (params[:category_combo] || "AND")
+
+    # get base works collection based on user type (posters, noncorp, corp)
+    @works = Work.all
+    if current_user.posters!
+      @works = @works.art_type_filter('POSTER')
+    elsif current_user.non_corporate!
+      @works = @works.corp_coll_filter(false)
+    end
 
     if params[:art_type].present?
       @works = @works.art_type_filter(params[:art_type])
     end
 
-    if params[:availability].present?
+    # only the admin can look at the non-available works
+    if params[:availability].present? && current_user.admin!
       @works = @works.availability_filter(params[:availability])
+    else
+      @works = @works.availability_filter(false)
     end
 
-    # filter by corporate collection/noncorporate
+    # filter by corporate collection/noncorporate if available to them
     if params[:collection].present?
-      if params[:collection].eql?('CORP')
+      if params[:collection].eql?('CORP') && (current_user.admin! || current_user.corporate!)
         @works = @works.corp_coll_filter(true)
       elsif params[:collection].eql?('NONCORP')
         @works = @works.corp_coll_filter(false)

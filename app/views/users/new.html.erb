@@ -38,6 +38,7 @@
     <%= form.label :company %>
     <%= form.text_field :company, id: :user_company %>
   </div>
+
 <!-- #### ADDRESS FIELD STARTS HERE #### -->
 <div class="fields">
     <%=form.fields_for :address do |a| %>
@@ -51,7 +52,7 @@
         </div>
         <div class="two wide field">
             <label>State </label>
-            <%=a .text_field :state, id: :state %>
+            <%= a.text_field :state, id: :state %>
         </div>
 
         <div class="field">
@@ -65,11 +66,15 @@
         </div>
 </div>
 <%end%><!-- #### ADDRESS FIELD ENDS HERE #### -->
+
+<h5>Create a password: </h5>
 <div class='field'>
   <%= form.label :password %>
   <%= form.password_field :password, id: :user_password %>
 </div>
-
+<div class='field'>
+  <%= form.label :password_confirmation %>
+  <%= form.password_field :password_confirmation, id: :user_password_confirmation %>
 
 <br>
 <div class="actions">

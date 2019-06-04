@@ -23,7 +23,7 @@
 <p>
   <strong>Address:</strong>
   <%= @user.address['street_address'] %><br/>
-  <%= @user.address['city'] %>, <%= @user.address['state'] %><br/>
+  <%= @user.address['city'] %>, <%= @user.address['state'] %>
   <%= @user.address['zip'] %><br/>
   <%= @user.address['country'] %>
 </p>
@@ -34,4 +34,4 @@
 </p>
 
 <%= link_to 'Edit', edit_user_path(@user) %> |
-<%= link_to 'Back', users_path %>
+<%= link_to 'Delete', user_path(@user), method: :delete %>
