@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <title>ArtSales</title>
     <%= csrf_meta_tags %>
 
@@ -10,7 +14,9 @@
 
   <body>
     <%= render 'shared/header' %>
-    <p id=”alert”><%= alert %></p>
-    <%= yield %>
+    <div class='container is-fluid'>
+      <%= render 'shared/errors' %>
+      <%= yield %>
+    </div>
   </body>
 </html>

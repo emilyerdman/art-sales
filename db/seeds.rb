@@ -8,6 +8,7 @@
 
 require 'csv'
 
+
 contact_csv_text = File.read(Rails.root.join('lib','seeds', 'Contacts.csv'))
 contact_csv = CSV.parse(contact_csv_text, :headers => true, :encoding => 'utf-8', :liberal_parsing => true)
 puts "contacts"
@@ -87,4 +88,21 @@ work_csv.each do |row|
   w.save
 end
 
+
+inventory_csv_text = File.read(Rails.root.join('lib', 'seeds', 'inventoried_works.csv'))
+inventory_csv = CSV.parse(inventory_csv_text, :headers => true, :encoding => 'utf-8', :liberal_parsing => true)
+inventory_csv.each do |row|
+  work = Work.find_by_inventory_number(row['Inventory Number'])
+  if work != nil
+    if work.title != row['Title']
+      work.title = row['Title']
+      puts 'new title %s' % row['Title']
+    end
+    if row['Confirmed Middleton Hills'].eql?('TRUE')
+      work.eag_confirmed = true
+      work.bin = row['Bin']
+      work.save
+    end
+  end
+end
 

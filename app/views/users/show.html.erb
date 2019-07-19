@@ -1,37 +1,29 @@
-<p id="notice"><%= notice %></p>
+<section class='section'>
+  <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Email:</strong>
-  <%= @user.email %>
-</p>
+  <h2 class='title'>Your Profile</h2>
+  <div class='content'>
+    <p class='subtitle'><strong>Email:</strong> <%= @user.email %></p>
+    <p class='subtitle'><strong>First name:</strong> <%= @user.first_name %></p>
+    <p class='subtitle'><strong>Last name:</strong> <%= @user.last_name %></p>
+    <p class='subtitle'><strong>Phone:</strong> <%= @user.phone %></p>
 
-<p>
-  <strong>First name:</strong>
-  <%= @user.first_name %>
-</p>
+    <div class='tile is-ancestor'>
+      <div class='tile is-parent is-3'>
+        <div class='tile is-child is-4'>
+          <p class='subtitle'><strong>Address:</strong> </p>
+        </div>
+        <div class='tile is-child'>
+          <p class='subtitle'><%= !@user.address['street_address'].empty? ? @user.address['street_address'] : ''%><br/>
+          <%= !@user.address['city'].empty? && !@user.address['state'].empty? ? "%s, %s" % [@user.address['city'], @user.address['state']] : ''%>
+          <%= !@user.address['zip_code'].empty? ? @user.address['zip_code'] : '' %><br/>
+          <%= !@user.address['country'].empty? ? @user.address['country'] : '' %></p>
+        </div>
+      </div>
+    </div>
+    <p class='subtitle'><strong>Company:</strong> <%= @user.company %></p>
+  </div>
 
-<p>
-  <strong>Last name:</strong>
-  <%= @user.last_name %>
-</p>
-
-<p>
-  <strong>Phone:</strong>
-  <%= @user.phone %>
-</p>
-
-<p>
-  <strong>Address:</strong>
-  <%= @user.address['street_address'] %><br/>
-  <%= @user.address['city'] %>, <%= @user.address['state'] %>
-  <%= @user.address['zip'] %><br/>
-  <%= @user.address['country'] %>
-</p>
-
-<p>
-  <strong>Company:</strong>
-  <%= @user.company %>
-</p>
-
-<%= link_to 'Edit', edit_user_path(@user) %> |
-<%= link_to 'Delete', user_path(@user), method: :delete %>
+  <%= link_to 'Edit', edit_user_path(@user), class: 'button' %>
+  <%= link_to 'Delete', user_path(@user), method: :delete, class: 'button' %>
+</section>

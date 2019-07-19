@@ -1,0 +1,4 @@
+class ErrorController < ApplicationController
+
+
+end

@@ -2,7 +2,9 @@ class Work < ApplicationRecord
   belongs_to :artist, optional: true
   belongs_to :contact, optional: true
   scope :art_type_filter, -> (param) { where(art_type: param)}
-  scope :availability_filter, -> (param) { where(sold: param)}
+  scope :eag_availability_filter, -> (param) { where(eag_confirmed: param)}
+  scope :availability_filter, -> (param) {where("current_owner > 0")}
+  scope :framed_filter, -> (param) {where(framed: param)}
   scope :corp_coll_filter, -> (param) { where(corporate_collection: param)}
   scope :category_filter, -> (param) { where("category LIKE ?", "%#{param}%")}
   scope :search_filter, -> (param) {where('LOWER(category) LIKE :search OR 
@@ -80,14 +82,17 @@ class Work < ApplicationRecord
   end
   
   def getFrame
-    if self.framed && !self.frame_condition.blank?
-      split = self.frame_condition.split(' ')
-      if (split.size > 1)
-        return "Yes - %s" % split[1]
-      elsif !split[0].match? /\A\d+\z/
-        return "Yes - %s" % self.frame_condition
+    if self.framed
+      if !self.frame_condition.blank?
+        split = self.frame_condition.split(' ')
+        if (split.size > 1)
+          return "Yes - %s" % split[1]
+        elsif !split[0].match? /\A\d+\z/
+          return "Yes - %s" % self.frame_condition
+        end
+      else
+        return "Yes"
       end
-      return "Yes"
     else
       return "Not Framed"
     end
@@ -130,30 +135,33 @@ class Work < ApplicationRecord
   end
 
   def getAvailability
-    owner = ''
+    if self.eag_confirmed
+      return 'Yes - EAG'
+    end
+    avail = ''
     if self.current_owner > 0
-      owner = "- Sold To %s" % Contact.find(self.current_owner).getName
+      avail = "- Sold To %s" % Contact.find(self.current_owner).getName
     end
     if !self.contact_id.nil?
       if self.current_owner != self.contact_id
-        owner += "\n\n%s" % Contact.find(self.contact_id).getName
+        avail += "\n\n%s" % Contact.find(self.contact_id).getName
       end
     end
     if !sold
-      owner = 'Yes'
+      avail = 'Yes'
     else
-      owner = owner.prepend('No ')
+      avail = avail.prepend('No ')
     end
     if sold && erdman
-      owner = owner.prepend ('Unsure (Sold + Erdman Art) - ')
+      avail = avail.prepend ('Unsure (Sold + Erdman Art) - ')
     elsif !sold && !erdman
-      owner = owner.prepend ('Unsure (Not Sold + Not Erdman Art) -')
+      avail = avail.prepend ('Unsure (Not Sold + Not Erdman Art) -')
     end
-    return owner
+    return avail
   end
 
   def getLocation
-    location = "Unknown"
+    location = self.location
     # try to find the contact id
     if !self.location.blank?
       contact = Contact.find(self.location)

@@ -5,8 +5,7 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    puts User.categories
-    if current_user && current_user.admin!
+    if current_user && current_user.admin?
       @users = User.all.order(:id)
     else
       render file: "#{Rails.root}/public/404", status: :not_found
@@ -38,9 +37,10 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     @user.approved = false
-
+    @user.category = User.categories['posters']
     if @user.save
       log_in @user
+      flash[:success] = "Account created and user logged in successfully. You will need to wait for an administrator to approve your account before you can access the works. Please contact help@erdman-art-group.com with any questions or concerns."
       redirect_to @user
     else
       render 'new'
@@ -51,8 +51,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1.json
   def update
     if current_user == @user && @user.update(user_params)
-      format.html { redirect_to @user, notice: 'User was successfully updated.' }
-      format.json { render :show, status: :ok, location: @user }
+      redirect_to(@user, notice: 'User was successfully updated.')
     else
       format.html { render :edit }
       format.json { render json: @user.errors, status: :unprocessable_entity }
@@ -66,7 +65,7 @@ class UsersController < ApplicationController
       @user.destroy
       log_out
       redirect_to root_url
-    elsif current_user.admin!
+    elsif current_user.admin?
       @user.destroy
       redirect_to users_path
     else
@@ -86,11 +85,10 @@ class UsersController < ApplicationController
 
   def change_user_category
     begin
-      puts @user
       @user.change_user_category(params[:category])
+      @user.save
       redirect_to users_path
     rescue StandardError => e
-      puts e
       @error = e
       render file: "#{Rails.root}/public/404", status: :not_found
     end

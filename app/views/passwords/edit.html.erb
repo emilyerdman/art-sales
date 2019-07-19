@@ -1,0 +1,15 @@
+<section class='section'>
+  <h3 class='title'>Create New Password</h3>
+  <%= form_with url: reset_password_path do |form| %>
+    <%= form.hidden_field :token, :value => params[:id] %>
+    <%= form.hidden_field :email, :value => @user.email %>
+    <div class='field is-grouped'>
+      <div class='control'>
+        <%= form.password_field :password, id: :user_password, class: 'input', placeholder: 'Enter new password' %>
+      </div>
+      <div class='control'>
+        <%= form.submit 'Change Password', class: 'button' %>
+      </div>
+  </div>
+  <% end %>
+</section>

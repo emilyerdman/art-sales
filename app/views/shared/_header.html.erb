@@ -1,14 +1,43 @@
-<div>
-  <h1><%= link_to('Erdman Art Group', works_path) %></h1>
-<% if current_user %>
-  <h3><%= link_to('View Profile', user_path(current_user)) %></h3>
-  <h3><%= link_to('Logout', logout_path) %></h3>
-  <% if current_user.admin! %>
-    <h3><%= link_to('Admin Panel', users_path) %></h3>
-  <% end %>
-<% else %>
-  <h3><%= link_to('Login', login_path) %></h3>
-  <h3><%= link_to('Create User', new_user_path) %></h3>
-<% end %>
+<div class="navbar is-spaced" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <%=link_to(image_tag("https://s3.us-east-2.amazonaws.com/works-images/erdman-art-logo.png", class: "navbar-item navbar-brand", width: "180"), works_path) %>
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarMenu" class="navbar-menu">
+      <div class="navbar-start">
+        <% if current_user %>
+          <%= link_to('Home', works_path, class: 'navbar-item') %>
+          <%= link_to('View Profile', user_path(current_user), class: 'navbar-item') %>
+          <% if current_user.admin? %>
+
+            <%= link_to('Admin User Panel', users_path, class: 'navbar-item') %>
+            <%= link_to('Admin Works Panel', works_admin_path, class: 'navbar-item') %>
+
+          <% end %>
+      </div>
+      <div class='navbar-end'>
+        <div class='navbar-item'>
+          <div class='buttons'>
+            <%= link_to('Logout', logout_path, class: 'button is-link') %>
+          </div>
+        </div>
+      </div>
+        <% else %>
+      </div>
+      <div class='navbar-end'>
+          <div class='navbar-item'>
+            <div class='buttons'>
+            <%= link_to('Log in', login_path, class: 'button is-link') %>
+            <%= link_to('Sign up', new_user_path, class: 'button is-light') %>
+            </div>
+          </div>
+      </div>
+        <% end %>
+  </div>
 
 </div>

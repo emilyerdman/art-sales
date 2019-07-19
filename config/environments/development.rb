@@ -53,4 +53,19 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.action_controller.action_on_unpermitted_parameters = :raise
+
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_options = {from: 'do-not-reply@erdman-art-group.com'}
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+  address:              'mail.hover.com',
+  port:                 587,
+  domain:               'erdman-art-group.com',
+  user_name:            'do-not-reply@erdman-art-group.com',
+  password:             'jikcyp-fojwaS-hamby9',
+  authentication:       'plain',
+  enable_starttls_auto: true  }
+  config.action_mailer.default_url_options = {host: 'localhost:3000'}
+
 end

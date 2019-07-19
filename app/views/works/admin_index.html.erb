@@ -1,0 +1,73 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Edit Works</h1>
+  <h3><%= getPageCount(@page, @total_works, @numworks) %></h3>
+  <div>
+  <%= form_with url: works_admin_path, method: :get, skip_enforcing_utf8: true, local: true do |form| %>
+    <%= form.hidden_field(:sort_by, :value => @sort_by) %>
+    <p>List 
+      <%= form.select('numworks', options_for_select( ["10", "25", "50", "100" ], @numworks), include_hidden: false) %>
+    works per page
+      <%= form.submit('GO', name: nil) %></p>
+    <p>Search Works:</p>
+      <%= form.text_field('search', :value => params[:search]) %>
+      <%= form.submit('GO', name: nil) %>
+  </div>
+  <div>
+    <p>Sort By: </p>  <!-- fix the select options so they pass the correct values to the form-->
+    <%= form.select('sort_by', options_for_select([['Inventory No. (ASC)', 0],
+                                                   ['Inventory No. (DESC)', 1],
+                                                   ['Title (ASC)', 3],
+                                                   ['Title (DESC)', 2],
+                                                   ['Retail Value (ASC)', 5],
+                                                   ['Retail Value (DESC)', 4]], @sort_by)) %>
+    <%= form.submit('GO', name: nil) %>
+  </div>
+  <% end %>
+
+<table>
+    <tr>
+      <th>Inventory No.</th>
+      <th>Piece Info</th>
+      <th>Type</th>
+      <th>Category</th>
+      <th>Retail Value</th>
+      <th>Frame</th>
+      <th>Available</th>
+      <th>Location</th>
+      <th>Submit</th>
+    </tr>
+
+    <% @works.each do |work| %>
+    <%= form_with(model: work, local: true, method: :patch) do |form| %>
+    <tr>
+      <td><%= work.inventory_number %></td>
+      <td><%= link_to(work.getArtist, work.artist) %><br/><%= simple_format(work.getDisplayInfo) %></td>
+      <td><%= work.art_type %></td>
+      <td><%= work.getCategory %></td>
+      <td><%= work.getRetailValue %></td>
+      <td><%= work.getFrame %></td>
+      <td><p><%= 'Current Availability: %s' % work.getAvailability %></p>
+          <%= form.radio_button(:eag_confirmed, true) %>
+          <%= form.label('eag_confirmed_true', 'EAG - Yes') %>
+          <%= form.radio_button(:eag_confirmed, false) %> 
+          <%= form.label('eag_confirmed_false', 'EAG - No') %></td>
+      <td><%= form.text_area(:location) %> </td>
+      <td><%= form.submit %></td>
+    </tr>
+    <% end %>
+    <% end %>
+  </table>
+
+<div>
+   <ul class="pager" style="padding-left:10px">
+      <li class="previous <%= @page == 0 ? 'disabled' : '' %>" style="display:inline;padding-right:25px">
+          <%= link_to_if @page > 0, "<< Previous", works_path(filterParams.merge({page: @page - 1})) %>
+      </li>
+      <span/>
+      <li class="next" style="display:inline">
+          <%= link_to_if ((@page * @numworks) + @numworks) < @total_works, "Next >>", works_path(filterParams.merge({page: @page + 1})) %>
+      </li>
+   </ul>
+</div>
+

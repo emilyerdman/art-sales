@@ -1,57 +1,121 @@
-<%= form_with(model: user, local: true) do |form| %>
-  <% if user.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+<section class='section'>
+  <div class='tile is-ancestor'>
+    <div class='tile is-parent is-6'>
+      <div class='tile is-child'>
+        <%= form_with(model: user, local: true) do |form| %>
+          <div class='content'>
+            <% if user.errors.any? %>
+              <div id="error_explanation">
+                <h3 class='subtitle'><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h3>
 
-      <ul>
-      <% user.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+                <ul>
+                <% user.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+                </ul>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="field">
+            <%= form.label :email, class: 'label' %>
+            <div class='control'>
+              <%= form.text_field :email, id: :user_email, class: 'input' %>
+            </div>
+          </div>
+
+          <div class="field">
+            <%= form.label :first_name, class: 'label' %>
+            <div class='control'>
+              <%= form.text_field :first_name, id: :user_first_name, class: 'input' %>
+            </div>
+          </div>
+
+          <div class="field">
+            <%= form.label :last_name, class: 'label' %>
+            <div class='control'>
+              <%= form.text_field :last_name, id: :user_last_name, class: 'input' %>
+            </div>
+          </div>
+
+          <div class="field">
+            <%= form.label :phone, class: 'label' %>
+            <div class='control'>
+              <%= form.text_field :phone, id: :user_phone, class: 'input' %>
+            </div>
+          </div>
+
+          <div class="field">
+            <%= form.label :company, class: 'label' %>
+            <div class='control'>
+              <%= form.text_field :company, id: :user_company, class: 'input' %>
+            </div>
+          </div>
+
+          <div class='tile is-ancestor'>
+            <div class='tile is-parent is-vertical'>
+              <div class='tile is-child'>
+                <div class="field">
+                  <%= form.label :address, class: 'label' %>
+                </div>
+              </div>
+              <div class='tile is-parent'>
+                <div class='tile is-child is-1'>
+                </div>
+                <div class='tile is-child is-11'>
+                  <div class='field'>
+                    <%= form.fields_for :address do |f| %>
+                      <%= f.label 'Street Address', class: 'label' %>
+                      <div class='control'>
+                        <%= f.text_field :street_address, :value => @current_user ? @user.address['street_address'] : '', class: 'input' %>
+                      </div>
+                      <%= f.label 'City', class: 'label' %>
+                      <div class='control'>
+                        <%= f.text_field :city, :value => @current_user ? @user.address['city'] : '', class: 'input' %>
+                      </div>
+                      <%= f.label 'State', class: 'label' %>
+                      <div class='control'>
+                        <div class='select'>
+                          <%= f.select(:state, options_for_select( ['','AK','AL','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'], @current_user ? @user.address['state'] : '')) %>
+                        </div>
+                      </div>
+                      <%= f.label 'Postal Code', class: 'label' %>
+                      <div class='control'>
+                        <%= f.text_field :zip_code, :value => @current_user ? @user.address['zip_code'] : '', class: 'input' %>
+                      </div>
+                      <%= f.label 'Country', class: 'label' %>
+                      <div class='control'>
+                        <%= f.text_field :country, :value => @current_user ? @user.address['country'] : '', class: 'input' %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <% if !@current_user %>
+          <h2 class='subtitle'>Create a Password</h2>
+            <div class="field">
+              <%= form.label :password, class: 'label' %>
+              <div class='control'>
+                <%= form.password_field :password, id: :user_password, class: 'input' %>
+              </div>
+            </div>
+
+            <div class="field">
+              <%= form.label :password_confirmation, class: 'label' %>
+              <div class='control'>
+                <%= form.password_field :password_confirmation, id: :user_password_confirmation, class: 'input' %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="control">
+            <%= form.submit class: 'button' %>
+          </div>
+        <% end %>
+      </div>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= form.label :email %>
-    <%= form.text_field :email, id: :user_email %>
   </div>
-
-  <div class="field">
-    <%= form.label :password %>
-    <%= form.password_field :password, id: :user_password %>
-  </div>
-
-  <div class="field">
-    <%= form.label :password_confirmation %>
-    <%= form.password_field :password_confirmation, id: :user_password_confirmation %>
-  </div>
-
-  <div class="field">
-    <%= form.label :first_name %>
-    <%= form.text_field :first_name, id: :user_first_name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :last_name %>
-    <%= form.text_field :last_name, id: :user_last_name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :phone %>
-    <%= form.text_field :phone, id: :user_phone %>
-  </div>
-
-  <div class="field">
-    <%= form.label :address %>
-    <%= form.text_field :address, id: :user_address %>
-  </div>
-
-  <div class="field">
-    <%= form.label :company %>
-    <%= form.text_field :company, id: :user_company %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-<% end %>
+</section>

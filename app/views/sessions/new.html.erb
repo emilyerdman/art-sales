@@ -1,14 +1,30 @@
-<h1>Login</h1>
-<%= form_tag sessions_path do |form| %>
-  <div class=”field”>
-    <%= label_tag :email %>
-    <%= text_field_tag :email %>
+<section class='section'>
+  <h1 class='title'>Login</h1>
+  <div class='columns'>
+    <div class='column is-half'>
+    <%= form_with url: sessions_path do |form| %>
+    <div class='field'>
+      <%= form.label :email, class: 'label' %>
+      <div class='control'>
+        <%= form.text_field :email, class: 'input' %>
+      </div>
+    </div>
+    <div class='field'>
+      <%= form.label :password, class: 'label' %>
+      <div class='control'>
+        <%= form.password_field :password, class: 'input' %>
+      </div>
+    </div>
+    <div class='field is-grouped'>
+      <div class='control'>
+        <%= form.submit 'Login', class: 'button is-link' %>
+      </div>
+    <% end %>
+      <div class='control'>
+          <%= link_to 'Forgot Password', show_password_reset_path, class: 'button is-text' %>
+      </div>
+    </div>
   </div>
-  <div class=”field”>
-    <%= label_tag :password %>
-    <%= password_field_tag :password %>
-  </div>
-  <div class=”actions”>
-    <%= submit_tag 'Login' %>
-  </div>
-<% end %>
+</div>
+
+</section>
