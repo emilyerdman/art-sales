@@ -30,6 +30,11 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
+# updated for security concerns
+gem "actionview", ">= 5.1.6.2"
+gem "rubyzip", ">= 1.2.2"
+gem "ffi", ">= 1.9.24"
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
