@@ -3,7 +3,7 @@ class Work < ApplicationRecord
   belongs_to :contact, optional: true
   scope :art_type_filter, -> (param) { where(art_type: param)}
   scope :eag_availability_filter, -> (param) { where(eag_confirmed: param)}
-  scope :availability_filter, -> (param) {where("current_owner > 0")}
+  scope :availability_filter, -> (param) { where("current_owner > #{param}") }
   scope :framed_filter, -> (param) {where(framed: param)}
   scope :corp_coll_filter, -> (param) { where(corporate_collection: param)}
   scope :category_filter, -> (param) { where("category LIKE ?", "%#{param}%")}
@@ -11,6 +11,7 @@ class Work < ApplicationRecord
                                            LOWER(title) LIKE :search OR 
                                            LOWER(media) LIKE :search OR 
                                            LOWER(inventory_number) LIKE :search', search: "%#{param}%")}
+  scope :retail_value_filter, -> (param) { where("retail_value #{param}")}
   S3_URL = "https://s3.us-east-2.amazonaws.com/works-images/"
 
   def getArtist

@@ -204,11 +204,11 @@
                 <div class='tile is-child is-2'>
                   <label class='label'>Availability</label>
                   <div class='control'>
-                    <%= form.radio_button('availability', '1', checked: params[:availability].eql?("1"), id: 'availability_SOLD') %>
+                    <%= form.radio_button('availability', '0', checked: params[:availability].eql?("1"), id: 'availability_SOLD') %>
                     <%= form.label('availability_SOLD', 'Sold', class: 'radio') %>
                   </div>
                   <div class='control'>
-                    <%= form.radio_button('availability', '0', checked: params[:availability].eql?("0"), id: 'availability_AVAILABLE') %>
+                    <%= form.radio_button('availability', '1', checked: params[:availability].eql?("0"), id: 'availability_AVAILABLE') %>
                     <%= form.label('availability_AVAILABLE', 'Available', class: 'radio') %>
                   </div>
                   <div class='control'>

@@ -3,6 +3,7 @@ class WorksController < ApplicationController
   NUM_WORKS = 10
   ADMIN_NUM_WORKS = 50
   SORT_BY = 0
+  NONCORP_VALUE_CEIL = 400.0
 
   # SORT ORDERS
   # inventory number asc = 0
@@ -39,6 +40,9 @@ class WorksController < ApplicationController
       # non corporate can't see any corporate or any non-available fine art
       if current_user.non_corporate?
         @works = posters.or(non_corporate)
+        retail_below = @works.retail_value_filter("< %d" % NONCORP_VALUE_CEIL)
+        retail_none = @works.retail_value_filter("is NULL")
+        @works = retail_below.or(retail_none)
       end
 
       # corporate can't see any non-available fine art
@@ -51,6 +55,7 @@ class WorksController < ApplicationController
         @works = @works.art_type_filter(params[:art_type])
       end
 
+      # FIX THIS FILTER
       # only the admin can look at the non-available works
       if params[:availability].present? && current_user.admin?
         @works = @works.availability_filter(params[:availability])
