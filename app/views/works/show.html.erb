@@ -2,16 +2,16 @@
   <%= image_tag(@work.getImageUrl, width: '500', alt: @work.title) %>
 </div>
 <div>
-    <p><%= link_to(@work.getArtist, @work.artist) %><br/><%= simple_format(@work.getDisplayInfo) %></p>
-  <p>Value: <%= @work.getRetailValue %></p>
+    <p><%= @work.getArtist %><br/><%= simple_format(@work.getDisplayInfo) %></p>
+  <!-- <p>Value: <%= @work.getRetailValue %></p> -->
   <p><% if @work.framed then 'FRAMED' else 'UNFRAMED' end %> <%= @work.art_type %></p>
   <% if @work.framed %>
     <p>Frame Type: <%= @work.getFrame %></p>
   <% end %>
   <p>Inventory No. <%= @work.inventory_number %></p>
   <p>Categories: <%= @work.getCategory %></p>
-  <p>Location: <%= @work.getLocation %></p>
+  <!-- <p>Location: <%= @work.getLocation %></p> -->
 </div>
 <div>
-  <p><%= link_to('View Artist', @artist) %></p>
+  <p><%# = link_to('View Artist', @artist) %></p>
 </div>

@@ -297,7 +297,7 @@
           <% @works.each do |work| %>
           <tr>
             <td><%= link_to(image_tag(work.getImageUrl, width: '200', alt: work.title), work) %></td>
-            <td><%= link_to(work.getArtist, work.artist) %><br/><%= simple_format(work.getDisplayInfo) %></td>
+            <td><%= work.getArtist %><br/><%= simple_format(work.getDisplayInfo) %></td>
             <td><%= work.inventory_number %></td>
             <td><%= work.art_type %></td>
             <td><%= work.getCategory %></td>
