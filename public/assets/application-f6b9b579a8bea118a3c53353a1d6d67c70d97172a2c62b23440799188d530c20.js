@@ -11703,10 +11703,6 @@ return jQuery;
 
 }).call(this);
 (function() {
-
-
-}).call(this);
-(function() {
   var context = this;
 
   (function() {
@@ -12336,21 +12332,21 @@ return jQuery;
 
 
 }).call(this);
-(function() {
+document.addEventListener("turbolinks:load", function() {
+  $(document).ready(function() {
+    console.log('document ready');
+    // Check for click events on the navbar burger icon
+    $(".navbar-burger").click(function() {
+        console.log('navbar clicked');
 
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        $(".navbar-burger").toggleClass("is-active");
+        $(".navbar-menu").toggleClass("is-active");
 
-}).call(this);
-$(document).ready(function() {
-
-  // Check for click events on the navbar burger icon
-  $(".navbar-burger").click(function() {
-
-      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-      $(".navbar-burger").toggleClass("is-active");
-      $(".navbar-menu").toggleClass("is-active");
-
+    });
   });
-});
+})
+;
 // This is a manifest file that'll be compiled into application.js, which will include all the files
 // listed below.
 //
@@ -12363,7 +12359,6 @@ $(document).ready(function() {
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-
 
 
 
