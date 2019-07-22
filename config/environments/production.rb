@@ -62,6 +62,20 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "art-sales_#{Rails.env}"
   config.action_mailer.perform_caching = false
 
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.default_options = {from: 'do-not-reply@erdman-art-group.com'}
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+  address:              'mail.hover.com',
+  port:                 587,
+  domain:               'erdman-art-group.com',
+  user_name:            'do-not-reply@erdman-art-group.com',
+  password:             'jikcyp-fojwaS-hamby9',
+  authentication:       'plain',
+  enable_starttls_auto: true  }
+  config.action_mailer.default_url_options = {host: 'erdman-art-group.com'}
+
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
