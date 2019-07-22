@@ -38,6 +38,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     @user.approved = false
     @user.category = User.categories['posters']
+    @user.email = @user.email.downcase
     if @user.save
       log_in @user
       flash[:success] = "Account created and user logged in successfully. You will need to wait for an administrator to approve your account before you can access the works. Please contact help@erdman-art-group.com with any questions or concerns."
