@@ -3,7 +3,7 @@ class Work < ApplicationRecord
   belongs_to :contact, optional: true
   scope :art_type_filter, -> (param) { where(art_type: param)}
   scope :eag_availability_filter, -> (param) { where(eag_confirmed: param)}
-  scope :availability_filter, -> (param) { where("current_owner > #{param}") }
+  scope :availability_filter, -> (param) { where("current_owner #{param}") }
   scope :framed_filter, -> (param) {where(framed: param)}
   scope :corp_coll_filter, -> (param) { where(corporate_collection: param)}
   scope :category_filter, -> (param) { where("category LIKE ?", "%#{param}%")}
@@ -137,41 +137,33 @@ class Work < ApplicationRecord
 
   def getAvailability
     if self.eag_confirmed
-      return 'Yes - EAG'
-    end
-    avail = ''
-    if self.current_owner > 0
-      avail = "- Sold To %s" % Contact.find(self.current_owner).getName
-    end
-    if !self.contact_id.nil?
-      if self.current_owner != self.contact_id
-        avail += "\n\n%s" % Contact.find(self.contact_id).getName
-      end
-    end
-    if !sold
-      avail = 'Yes'
+      return 'Yes'
     else
-      avail = avail.prepend('No ')
+      avail = 'No '
+      if self.current_owner > 0
+        avail += "- Sold To %s" % Contact.find(self.current_owner).getName
+      end
+      return avail
     end
-    if sold && erdman
-      avail = avail.prepend ('Unsure (Sold + Erdman Art) - ')
-    elsif !sold && !erdman
-      avail = avail.prepend ('Unsure (Not Sold + Not Erdman Art) -')
-    end
-    return avail
   end
 
   def getLocation
-    location = self.location
-    # try to find the contact id
-    if !self.location.blank?
-      contact = Contact.find(self.location)
-      if !contact.blank?
-        location = contact.getInfo
+    location = 'Last Known - '
+    if self.eag_confirmed
+      location = 'Erdman Art Group'
+    else
+      # try to find the contact id
+      if !self.location.blank?
+        contact = Contact.find(self.location)
+        if !contact.blank?
+          location += contact.getInfo
+        end
+      else
+        location += self.location
       end
-      if !self.bin.blank?
-        location += "\n\nBin %s" % self.bin
-      end
+    end
+    if !self.bin.blank?
+      location += "\n\nBin %s" % self.bin
     end
     return location
   end

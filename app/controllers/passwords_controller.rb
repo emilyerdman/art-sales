@@ -2,18 +2,22 @@ class PasswordsController < ApplicationController
 
   def forgot
     if params[:email].blank? # check if email is present
-      render json: {error: 'Email not present'}
-    end
-
-    user = User.find_by(email: params[:email]) # if present find user by email
-
-    if user.present?
-      user.generate_password_token! #generate pass token
-      ForgotPasswordMailer.forgot_password_email(user).deliver_now
-      redirect_to login_url
+      flash[:danger] = "Please enter an email."
+      redirect_to show_password_reset_url
     else
-      render json: {error: ['Email address not found. Please check and try again.']}, status: :not_found
-    end
+      email = params[:email].downcase
+      user = User.find_by(email: email) # if present find user by email
+
+      if user.present?
+        user.generate_password_token! #generate pass token
+        ForgotPasswordMailer.forgot_password_email(user).deliver_now
+        flash[:success] = "Password reset email sent to %s." % email
+        redirect_to login_url
+      else
+        flash[:danger] = "Account not found for email '%s'." % email
+        redirect_to show_password_reset_url
+      end
+    end 
   end
 
   def edit

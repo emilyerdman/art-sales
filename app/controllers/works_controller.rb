@@ -26,9 +26,9 @@ class WorksController < ApplicationController
       @works = Work.all
 
       #posters users can only see posters
-      posters = @works.art_type_filter('POSTER')
+      posters = @works.art_type_filter('POSTER').availability_filter('= 0')
       #non corporate can see posters + non corp coll available
-      non_corporate = @works.corp_coll_filter(false).eag_availability_filter(true)
+      non_corporate = @works.art_type_filter('FINE ART').corp_coll_filter(false).eag_availability_filter(true)
       #corporate can see posters + non corp coll available + corp coll available
       corporate = @works.art_type_filter('FINE ART').eag_availability_filter(true)
 
@@ -58,7 +58,15 @@ class WorksController < ApplicationController
       # FIX THIS FILTER
       # only the admin can look at the non-available works
       if params[:availability].present? && current_user.admin?
-        @works = @works.availability_filter(params[:availability])
+        if params[:availability].eql?('1')
+          posters_available = @works.art_type_filter('POSTER').availability_filter('= 0')
+          eag_confirmed = @works.eag_availability_filter(true)
+          @works = posters_available.or(eag_confirmed)
+        else
+          has_current_owner = @works.art_type_filter('POSTER').availability_filter('> 0')
+          non_eag_confirmed = @works.art_type_filter('FINE ART').eag_availability_filter(false)
+          @works = has_current_owner.or(non_eag_confirmed)
+        end
       end
 
       if params[:framed].present?
