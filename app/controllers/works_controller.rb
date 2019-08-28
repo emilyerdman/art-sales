@@ -22,95 +22,60 @@ class WorksController < ApplicationController
       @category_combo = (params[:category_combo] || "AND")
       @sort_by = (params[:sort_by] || 0)
 
+      @works = Work.none
       #admin can see all works
-      @works = Work.all
-
-      #posters users can only see posters
-      posters = @works.art_type_filter('POSTER').availability_filter('= 0')
-      #non corporate can see posters + non corp coll available
-      non_corporate = @works.art_type_filter('FINE ART').corp_coll_filter(false).eag_availability_filter(true)
-      #corporate can see posters + non corp coll available + corp coll available
-      corporate = @works.art_type_filter('FINE ART').eag_availability_filter(true)
-
-      # poster user can only see posters (but none are EAG confirmed), so they have no availability constraints
-      if current_user.posters?
-        @works = posters
-      end
-      
-      # non corporate can't see any corporate or any non-available fine art
-      if current_user.non_corporate?
-        @works = posters.or(non_corporate)
-        retail_below = @works.retail_value_filter("< %d" % NONCORP_VALUE_CEIL)
-        retail_none = @works.retail_value_filter("is NULL")
-        @works = retail_below.or(retail_none)
+      if current_user.admin?
+        @works = Work.all
+      elsif current_user.posters?
+        @Works = Work.getPostersWorks()
+      elsif current_user.non_corporate?
+        @works =  Work.getNonCorpWorks(true)
+      elsif current_user.corporate?
+        # corporate can't see any non-available fine art
+        @works = Work.getCorpWorks()
       end
 
-      # corporate can't see any non-available fine art
-      if current_user.corporate?
-        @works = posters.or(non_corporate.or(corporate))
+      if params[:art_type].present? && !current_user.posters?
+        puts 'filtering art type'
+        # posters user can't filter by art type
+        @works = Work.filterByArtType(@works, params[:art_type])
       end
 
-
-      if params[:art_type].present? && !@current_user.posters?
-        @works = @works.art_type_filter(params[:art_type])
-      end
-
-      # FIX THIS FILTER
       # only the admin can look at the non-available works
       if params[:availability].present? && current_user.admin?
-        if params[:availability].eql?('1')
-          posters_available = @works.art_type_filter('POSTER').availability_filter('= 0')
-          eag_confirmed = @works.eag_availability_filter(true)
-          @works = posters_available.or(eag_confirmed)
-        else
-          has_current_owner = @works.art_type_filter('POSTER').availability_filter('> 0')
-          non_eag_confirmed = @works.art_type_filter('FINE ART').eag_availability_filter(false)
-          @works = has_current_owner.or(non_eag_confirmed)
-        end
+        puts 'filtering availability'
+        @works = Work.filterByAvailability(@works, params[:availability])
       end
 
-      if params[:framed].present?
-        @works = @works.framed_filter(ActiveModel::Type::Boolean.new.cast(params[:framed]))
+      if params[:framed].present? && !params[:framed].eql?('ALL')
+        puts 'filtering framed'
+        @works = Work.filterByFramed(@works, params[:framed])
       end
 
-      # filter by corporate collection/noncorporate if available to them
-      if params[:collection].present?
-        if params[:collection].eql?('CORP')
-          @works = @works.corp_coll_filter(true)
-        elsif params[:collection].eql?('NONCORP')
-          @works = @works.corp_coll_filter(false)
-        end
+      # filter by corporate collection/noncorporate if admin or corp collection user
+      if params[:collection].present? && (current_user.admin? || current_user.corporate?) && !params[:collection].eql?('ALL')
+        puts 'filtering collection'
+        @works = Work.filterByCollection(@works, params[:collection])
       end
 
       # search causes other filters to reset
-      if params[:search].present?
-        stripped_param = params[:search].strip.downcase
-        works_filtered = @works.search_filter(stripped_param)
-        contacts_filtered = @works.where(artist_id: Artist.artist_filter(stripped_param))
-        @works = works_filtered.or(contacts_filtered)
+      if params[:search].present? 
+        puts 'filtering search'
+        @works = Work.searchWorks(@works, params[:search])
       end
 
       if params[:category].present?
-        combo = params[:category_combo]
-        if combo.eql?("OR")
-          all_filtered = Work.none
-        else
-          all_filtered = Work.all
-        end
-        params[:category].each do |category|
-          filtered = @works.category_filter(category)
-          puts filtered.count
-          if combo.eql?("OR")
-            all_filtered = filtered.or(all_filtered)
-          else
-            all_filtered = filtered.merge(all_filtered)
-          end
-          puts all_filtered.count
-         end
-        @works = all_filtered
+        puts 'filtering category'
+        @works = Work.filterByCategory(@works, params[:category], params[:combo])
       end
 
-      @works = sort_works(params[:sort_by].to_i, @works)
+      if params[:unique].present? && params[:unique].eql?('1')
+        puts 'filtering unique'
+        @works = Work.filterUnique(@works)
+      end
+
+      # sort according to the sort_by param (always present)
+      @works = Work.sortWorks(@works, params[:sort_by].to_i)
 
 
       @total_works = @works.size
@@ -141,17 +106,30 @@ class WorksController < ApplicationController
     end
   end
 
-
-      # PATCH/PUT /users/1
-  # PATCH/PUT /users/1.json
-  def update
-    if current_user == @user && @user.update(user_params)
-      format.html { redirect_to @user, notice: 'User was successfully updated.' }
-      format.json { render :show, status: :ok, location: @user }
+  def pager(page, total_works, numworks)
+    first_array = []
+    second_array = []
+    third_array = []
+    num_pages = (total_works/numworks.to_f).ceil
+    # 1-3 .. X-1 X X+1 .. total_works : 10 < X < total_works - 2 && total_works > 10
+    # 1-9 .. total_works : X <= 10 && total_works > 10
+    # 1-5 .. X X+1 X+2 X+3 total_works : X >= total_works - 4 && total_works > 10
+    # 1-total_works : <= 10 && total_works <= 10
+    # 1-X ..
+    if num_pages > 10
+      if page < num_pages - 1 && page > 2
+        first_array = Array(1)
+        second_array = [page-1, page, page + 1]
+        third_array = [num_pages]
+      else
+          first_array = Array(1..3)
+          third_array = Array((num_pages-2)..num_pages)
+      end
     else
-      format.html { render :edit }
-      format.json { render json: @user.errors, status: :unprocessable_entity }
+      # simple paging
+      first_array = Array(1..num_pages)
     end
+    return [first_array, second_array, third_array]
   end
 
   private
@@ -165,47 +143,6 @@ class WorksController < ApplicationController
       params.require(:work).permit(:eag_confirmed, :location)
     end
 
-    def sort_works(sort_type, works)
-      if sort_type == 0
-        works = works.order(inventory_number: :asc)
-      elsif sort_type == 1
-        works = works.order(inventory_number: :desc) 
-      elsif sort_type == 2
-        works = works.order(title: :desc)
-      elsif sort_type == 3
-        works = works.order(title: :asc)
-      elsif sort_type == 4
-        works = works.order(retail_value: :desc).where.not(retail_value: nil)
-      elsif sort_type == 5
-        works = works.order(retail_value: :asc).where.not(retail_value: nil)
-      end
-    return works
-  end
-
-  def pager(page, total_works, numworks)
-    first_array = []
-    second_array = []
-    third_array = []
-    num_pages = (total_works/numworks.to_f).ceil
-    # 1-3 .. X-1 X X+1 .. total_works : 10 < X < total_works - 2 && total_works > 10
-    # 1-9 .. total_works : X <= 10 && total_works > 10
-    # 1-5 .. X X+1 X+2 X+3 total_works : X >= total_works - 4 && total_works > 10
-    # 1-total_works : <= 10 && total_works <= 10
-    # 1-X ..
-    if num_pages > 10
-      if page < num_pages - 2 && page > 4
-        first_array = Array(1..3)
-        second_array = [page-1, page, page + 1]
-        third_array = [num_pages]
-      else
-          first_array = Array(1..5)
-          third_array = Array((num_pages-4)..num_pages)
-      end
-    else
-      # simple paging
-      first_array = Array(1..num_pages)
-    end
-    return [first_array, second_array, third_array]
-  end
-
 end
+
+

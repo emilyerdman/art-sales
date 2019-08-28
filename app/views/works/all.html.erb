@@ -13,7 +13,6 @@
   <h2 class='subtitle'><%= getPageCount(@page, @total_works, @numworks) %></h2>
 
   <%= form_with url: works_path, method: :get, skip_enforcing_utf8: true, local: true do |form| %>
-    <%= form.hidden_field(:sort_by, :value => @sort_by) %>
     <div class='tile is-ancestor is-vertical'>
       <div class='tile is-parent box'>
         <div class='tile is-child is-4 columns is-vcentered is-centered'>
@@ -234,7 +233,7 @@
                 </div> 
               </div>             
               <% if @current_user.corporate? || @current_user.admin? %>
-                <div class='tile is-child is-5'>
+                <div class='tile is-child is-4'>
                   <label class='label'>Collection</label>
                   <div class='control'>
                     <%= form.radio_button('collection', 'CORP', checked: params[:collection].eql?("CORP"), id: 'collection_CORP') %>
@@ -245,11 +244,18 @@
                     <%= form.label('collection_NONCORP', 'Non Corporate Collection', class: 'radio') %>
                   </div>
                   <div class='control'>
-                    <%= form.radio_button('collection', 'ALL', checked: (!params[:collection].present? || params[:collection].eql?('ALL')), id: 'collection_ALL') %>
-                    <%= form.label('collection_ALL', 'All', class: 'radio') %>
+                    <%= form.radio_button('collection', '', checked: !params[:collection].present?, id: 'collection_ALL') %>
+                    <%= form.label('collection', 'All', class: 'radio') %>
                   </div>
                 </div>
               <% end %>
+              <div class='tile is-child is-2'>
+                <label class='label'>Unique</label>
+                <div class='control'>
+                  <%= check_box_tag('unique', '1', params[:unique].eql?('1'), id: 'unique') %>
+                  <%= label_tag('unique', 'Unique', class: 'checkbox') %>
+                </div>
+              </div>
             <% end %>
             </div>
           </div>

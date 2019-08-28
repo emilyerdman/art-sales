@@ -5,4 +5,9 @@ $danger: #FFCBCE;
 
 @import "bulma";
 
+.navbar-brand {
+  &:hover {
+  background-color: $white-ter;
+  }
+}
 

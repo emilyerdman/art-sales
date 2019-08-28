@@ -12,7 +12,7 @@ class Work < ApplicationRecord
                                            LOWER(media) LIKE :search OR 
                                            LOWER(inventory_number) LIKE :search', search: "%#{param}%")}
   scope :retail_value_filter, -> (param) { where("retail_value #{param}")}
-  S3_URL = "https://s3.us-east-2.amazonaws.com/works-images/"
+  NONCORP_VALUE_CEIL = 400.0
 
   def getArtist
     artist = self.artist
@@ -76,10 +76,10 @@ class Work < ApplicationRecord
     if !self.image.nil? && !self.image.empty?
       image_only = self.image[/[^\?]+/]
       image_url = image_only[3..-1].gsub('\\', '/').gsub(']', '').sub('Image', 'image').sub('.JPG', '.jpg')
-      aws_url = '%s%s' % [S3_URL, image_url]
+      aws_url = '%s%s' % [Rails.application.config.S3_URL, image_url]
       return aws_url
     end
-    return '%s%s' % [S3_URL, 'notfound.png']
+    return '%s%s' % [Rails.application.config.S3_URL, 'notfound.png']
   end
   
   def getFrame
@@ -139,11 +139,11 @@ class Work < ApplicationRecord
     if self.eag_confirmed
       return 'Yes'
     else
-      avail = 'No '
       if self.current_owner > 0
-        avail += "- Sold To %s" % Contact.find(self.current_owner).getName
+        return "No - Sold To %s" % Contact.find(self.current_owner).getName
+      else
+        return 'Possibly'
       end
-      return avail
     end
   end
 
@@ -175,6 +175,109 @@ class Work < ApplicationRecord
       return true
     end
     return false
+  end
+
+  def self.getPostersWorks()
+    # poster user can only see posters (but none are EAG confirmed)
+    posters = Work.all.art_type_filter('POSTER').availability_filter('= 0')
+    return current_works
+  end
+
+  def self.getNonCorpWorks(inc_retail_filter)
+    # non corporate can see posters + non corp coll available
+    # non corporate can't see any corporate or any non-available fine art
+    non_corporate = Work.all.art_type_filter('FINE ART').corp_coll_filter(false).eag_availability_filter(true)
+    posters = getPostersWorks()
+    works = posters.or(non_corporate)
+    # add additional filters
+    if (inc_retail_filter)
+      retail_below = works.retail_value_filter("< %d" % NONCORP_VALUE_CEIL)
+      retail_none = works.retail_value_filter("is NULL")
+      return retail_below.or(retail_none)
+    else
+      return works
+    end
+  end
+
+  def self.getCorpWorks()
+    #corporate can see posters + non corp coll available + corp coll available
+    corporate = Work.all.art_type_filter('FINE ART').eag_availability_filter(true)
+    return getPostersWorks().or(getNonCorpWorks(false).or(corporate))
+  end
+
+  def self.filterByArtType(works, art_type)
+    return works.art_type_filter(art_type)
+  end
+
+  def self.filterByAvailability(works, availability)
+    puts 'filtering'
+    if availability.eql?('1')
+      posters_available = works.art_type_filter('POSTER').availability_filter('= 0')
+      eag_confirmed = works.eag_availability_filter(true)
+      return posters_available.or(eag_confirmed)
+    else
+      has_current_owner = works.art_type_filter('POSTER').availability_filter('> 0')
+      non_eag_confirmed = works.art_type_filter('FINE ART').eag_availability_filter(false)
+      return has_current_owner.or(non_eag_confirmed)
+    end
+  end
+
+  def self.filterByFramed(works, framed)
+    return works.framed_filter(ActiveModel::Type::Boolean.new.cast(framed))
+  end
+
+  def self.filterByCollection(works, collection)
+    if collection.eql?('CORP')
+      return works.corp_coll_filter(true)
+    elsif collection.eql?('NONCORP')
+      return works.corp_coll_filter(false)
+    end
+  end
+
+  def self.searchWorks(works, keyword)
+    stripped_param = keyword.strip.downcase
+    works_filtered = works.search_filter(stripped_param)
+    contacts_filtered = works.where(artist_id: Artist.artist_filter(stripped_param))
+    return works_filtered.or(contacts_filtered)
+  end
+
+  def self.filterByCategory(works, categories, operator)
+    if operator.eql?("OR")
+      all_filtered = Work.none
+    else
+      all_filtered = works
+    end
+    categories.each do |category|
+      filtered = works.category_filter(category)
+      if operator.eql?("OR")
+        all_filtered = filtered.or(all_filtered)
+      else
+        all_filtered = filtered.merge(all_filtered)
+      end
+     end
+    return all_filtered
+  end
+
+  def self.filterUnique(works)
+    all_unique_works = Work.all.group(:title, :artist_id).calculate(:maximum, :id).values()
+    return works.where(id: all_unique_works)
+  end
+
+  def self.sortWorks(works, sort_type)
+    if sort_type == 0
+      works = works.order(inventory_number: :asc).order(title: :asc, artist_id: :asc)
+    elsif sort_type == 1
+      works = works.order(inventory_number: :desc) 
+    elsif sort_type == 2
+      works = works.order(title: :desc)
+    elsif sort_type == 3
+      works = works.order(title: :asc)
+    elsif sort_type == 4
+      works = works.order(retail_value: :desc).where.not(retail_value: nil)
+    elsif sort_type == 5
+      works = works.order(retail_value: :asc).where.not(retail_value: nil)
+    end
+    return works
   end
 
 end

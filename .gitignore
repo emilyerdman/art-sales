@@ -12,6 +12,8 @@
 /db/*.sqlite3-journal
 
 # Ignore all logfiles and tempfiles.
+tmp
+log
 /log/*
 /tmp/*
 !/log/.keep
@@ -26,4 +28,16 @@
 public/assets/image
 public/assets/killipsian\ fine\ art
 public/assets/poster\ images\ for\ web
+
+
+# Ignore encrypted secrets key file.
+config/secrets.yml.key
+
+# ignore localhost ssl setup
+config/ssl
+
+# ignore numbers files
+*.numbers
+*.xls
+
 

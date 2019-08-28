@@ -6,12 +6,16 @@
   <!-- <p>Value: <%= @work.getRetailValue %></p> -->
   <p><% if @work.framed then 'FRAMED' else 'UNFRAMED' end %> <%= @work.art_type %></p>
   <% if @work.framed %>
-    <p>Frame Type: <%= @work.getFrame %></p>
+    <p>Framed?: <%= @work.getFrame %></p>
   <% end %>
   <p>Inventory No. <%= @work.inventory_number %></p>
+  <% if @work.getCategory.present? %>
   <p>Categories: <%= @work.getCategory %></p>
-  <!-- <p>Location: <%= @work.getLocation %></p> -->
+  <% end %>
+  <% if current_user.admin? %>
+    <p>Location: <%= @work.getLocation %></p>
+  <% end %>
 </div>
 <div>
-  <p><%# = link_to('View Artist', @artist) %></p>
+  <p><%= link_to('View Artist', @artist, class: 'button') %></p>
 </div>

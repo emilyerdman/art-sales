@@ -14,9 +14,7 @@ module WorksHelper
   end
 
   def filterParams
-    return params.permit(:corp_coll, :collection, :art_type, :availability, :framed, :sort_by, :page, :category_combo, :search, :numworks, category:[])
+    return params.permit(:corp_coll, :collection, :art_type, :availability, :framed, :sort_by, :page, :category_combo, :search, :numworks, :unique, category:[])
   end
-
-
 
 end

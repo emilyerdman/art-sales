@@ -1,6 +1,11 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # load all of the secrets needed and env variables
+  GMAIL_PASSWORD = Rails.application.secrets.GMAIL_PASSWORD
+  config.S3_URL = 'https://s3.us-east-2.amazonaws.com/works-images/'
+
+
   # Code is not reloaded between requests.
   config.cache_classes = true
 
@@ -71,7 +76,7 @@ Rails.application.configure do
   port:                 587,
   domain:               'erdman-art-group.com',
   user_name:            'do-not-reply@erdman-art-group.com',
-  password:             'jikcyp-fojwaS-hamby9',
+  password:             GMAIL_PASSWORD,
   authentication:       'plain',
   enable_starttls_auto: true  }
   config.action_mailer.default_url_options = {host: 'erdman-art-group.com'}

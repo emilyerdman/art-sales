@@ -1,5 +1,6 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
+  config.S3_URL = 'https://s3.us-east-2.amazonaws.com/works-images/'
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
@@ -11,6 +12,9 @@ Rails.application.configure do
 
   # Show full error reports.
   config.consider_all_requests_local = true
+
+
+  config.assets.unknown_asset_fallback = false
 
   # Enable/disable caching. By default caching is disabled.
   if Rails.root.join('tmp/caching-dev.txt').exist?
@@ -25,7 +29,7 @@ Rails.application.configure do
 
     config.cache_store = :null_store
   end
-
+  
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
@@ -40,7 +44,7 @@ Rails.application.configure do
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.
-  config.assets.debug = true
+  config.assets.debug = false
 
   # Suppress logger output for asset requests.
   config.assets.quiet = false

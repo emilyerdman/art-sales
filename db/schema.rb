@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190708231904) do
+ActiveRecord::Schema.define(version: 20190819184743) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,6 +88,7 @@ ActiveRecord::Schema.define(version: 20190708231904) do
     t.boolean "eag_confirmed", default: false
     t.index ["artist_id"], name: "index_works_on_artist_id"
     t.index ["contact_id"], name: "index_works_on_contact_id"
+    t.index ["inventory_number"], name: "index_works_on_inventory_number"
   end
 
   add_foreign_key "works", "artists"
