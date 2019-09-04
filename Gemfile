@@ -34,6 +34,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem "actionview", ">= 5.1.6.2"
 gem "rubyzip", ">= 1.2.2"
 gem "ffi", ">= 1.9.24"
+gem "nokogiri", ">= 1.10.4"
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
