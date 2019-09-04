@@ -8,6 +8,10 @@ class CreateUsers < ActiveRecord::Migration[5.1]
       t.string :phone
       t.hstore :address
       t.string :company
+      t.integer :category, default: 0
+      t.boolean :approved, default: false
+      t.string :reset_password_token
+      t.datetime :reset_password_sent_at
 
       t.timestamps
     end

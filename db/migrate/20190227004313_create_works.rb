@@ -28,6 +28,13 @@ class CreateWorks < ActiveRecord::Migration[5.1]
       t.integer :current_owner
       t.boolean :sold
       t.boolean :erdman
+      t.string :location
+      t.string :bin
+      t.boolean :corporate_collection
+      t.boolean :eag_confirmed, default: false
     end
+    add_index :works, :inventory_number, unique: true
+    add_reference :works, :contact, foreign_key: true
+    add_reference :works, :artist, foreign_key: true
   end
 end
