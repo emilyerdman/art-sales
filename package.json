@@ -1,5 +1,8 @@
 {
   "name": "art-sales",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "bulma": "^0.7.5",
+    "font-awesome": "^4.7.0"
+  }
 }

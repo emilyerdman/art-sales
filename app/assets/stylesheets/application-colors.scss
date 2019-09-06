@@ -3,11 +3,13 @@ $primary: $red;
 $link: $red;
 $danger: #FFCBCE;
 
-@import "bulma";
+@import "bulma/sass/utilities/initial-variables";
 
 .navbar-brand {
   &:hover {
   background-color: $white-ter;
   }
 }
+
+@import "bulma";
 
