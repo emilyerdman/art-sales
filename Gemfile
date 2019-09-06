@@ -36,6 +36,9 @@ gem "rubyzip", ">= 1.2.2"
 gem "ffi", ">= 1.9.24"
 gem "nokogiri", ">= 1.10.4"
 
+# for recaptcha
+gem "recaptcha", require: "recaptcha/rails"
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
