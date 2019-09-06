@@ -42,6 +42,7 @@ class UsersController < ApplicationController
     if @user.save
       log_in @user
       flash[:success] = "Account created and user logged in successfully. You will need to wait for an administrator to approve your account before you can access the works. Please contact help@erdman-art-group.com with any questions or concerns."
+      NewAccountMailer.new_account_email(@user).deliver_now
       redirect_to @user
     else
       render 'new'

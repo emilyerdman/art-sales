@@ -32,10 +32,6 @@ class PasswordsController < ApplicationController
 
     user = User.find_by(reset_password_token: token)
 
-    # add the time thing so that if it's been more than an hour it won't let you reset
-    puts (Time.now - user.reset_password_sent_at)
-    puts user.reset_password_sent_at + 60*60
-
     if user.present? && user.password_token_valid? && (Time.now - user.reset_password_sent_at) <= 360
       if user.reset_password!(params[:password])
         redirect_to login_url

@@ -1,0 +1,13 @@
+A new account was created at <%= @user.created_at %>
+
+Details:
+
+  <%= @user.first_name %>
+  <%= @user.last_name %>
+  <%= @user.email %>
+  <%= @user.phone %>
+  <%= @user.address %>
+  <%= @user.company %>
+
+
+Approve the account <%= link_to('here', users_url) %>
