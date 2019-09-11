@@ -7,7 +7,7 @@ Rails.application.configure do
   config.read_encrypted_secrets = true
 
   # load all of the secrets needed and env variables
-  GMAIL_PASSWORD = Rails.application.secrets.GMAIL_PASSWORD
+  EMAIL_PASSWORD = Rails.application.secrets.EMAIL_PASSWORD
   config.S3_URL = 'https://s3.us-east-2.amazonaws.com/works-images/'
 
 
@@ -77,7 +77,7 @@ Rails.application.configure do
   port:                 587,
   domain:               'erdman-art-group.com',
   user_name:            'do-not-reply@erdman-art-group.com',
-  password:             GMAIL_PASSWORD,
+  password:             EMAIL_PASSWORD,
   authentication:       'plain',
   enable_starttls_auto: true  }
   config.action_mailer.default_url_options = {host: 'erdman-art-group.com'}
