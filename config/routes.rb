@@ -8,9 +8,12 @@ Rails.application.routes.draw do
   resources :users
   get 'works', to: 'works#all'
 
-  resources :works
+  resources :works do
+    resources :apps
+  end
 
   resources :artists
+
 
   root 'works#all'
 
@@ -24,6 +27,11 @@ Rails.application.routes.draw do
   get 'disapprove_user/:id', to: 'users#disapprove', as: 'disapprove_user'
   patch 'change_user_category/:id', to: 'users#change_user_category', as: 'change_user_category'
 
+  get 'approve_app/:id', to: 'apps#approve', as: 'approve_app'
+  get 'disapprove_app/:id', to: 'apps#disapprove', as: 'disapprove_app'
+  get 'apps/admin', to: 'apps#admin_index', as: 'apps_admin'
+  get 'apps', to: 'apps#index', as: 'user_apps'
+
   # works admin paths
   get 'works_admin', to: 'works#admin_index', as: 'works_admin'
 
@@ -31,6 +39,7 @@ Rails.application.routes.draw do
   post 'password/forgot', to: 'passwords#forgot', as: 'forgot_password'
   post 'password/reset', to: 'passwords#reset', as: 'reset_password'
   get 'password/reset', to: 'passwords#edit', as: 'edit_password'
+
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

@@ -10,11 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190819184743) do
+ActiveRecord::Schema.define(version: 20190925192304) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
+
+  create_table "apps", force: :cascade do |t|
+    t.string "organization"
+    t.boolean "approved", default: false
+    t.text "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.bigint "work_id"
+    t.index ["user_id"], name: "index_apps_on_user_id"
+    t.index ["work_id"], name: "index_apps_on_work_id"
+  end
 
   create_table "artists", force: :cascade do |t|
     t.string "first_name"
@@ -91,6 +103,8 @@ ActiveRecord::Schema.define(version: 20190819184743) do
     t.index ["inventory_number"], name: "index_works_on_inventory_number"
   end
 
+  add_foreign_key "apps", "users"
+  add_foreign_key "apps", "works"
   add_foreign_key "works", "artists"
   add_foreign_key "works", "contacts"
 end

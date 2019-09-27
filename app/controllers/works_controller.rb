@@ -16,24 +16,14 @@ class WorksController < ApplicationController
   # retail value asc = 7
   
   def all
-    if current_user    
-      @page = (params[:page] || 1).to_i
-      @numworks = (params[:numworks] || NUM_WORKS).to_i
+    if current_user && current_user.approved    
       @category_combo = (params[:category_combo] || "AND")
       @sort_by = (params[:sort_by] || 0)
-
       @works = Work.none
-      #admin can see all works
-      if current_user.admin?
-        @works = Work.all
-      elsif current_user.posters?
-        @Works = Work.getPostersWorks()
-      elsif current_user.non_corporate?
-        @works =  Work.getNonCorpWorks(true)
-      elsif current_user.corporate?
-        # corporate can't see any non-available fine art
-        @works = Work.getCorpWorks()
-      end
+      @page = (params[:page] || 1).to_i
+      @numworks = (params[:numworks] || NUM_WORKS).to_i      
+
+      @works = get_user_category_works()
 
       if params[:art_type].present? && !current_user.posters?
         puts 'filtering art type'
@@ -76,8 +66,6 @@ class WorksController < ApplicationController
 
       # sort according to the sort_by param (always present)
       @works = Work.sortWorks(@works, params[:sort_by].to_i)
-
-
       @total_works = @works.size
       @works = @works.offset(@numworks * (@page - 1)).limit(@numworks)
       @pager = pager(@page, @total_works, @numworks)
@@ -86,16 +74,16 @@ class WorksController < ApplicationController
 
     
   def show
+    user_works = get_user_category_works()
     @artist = Artist.find(@work.artist_id)
-    @contact = Contact.find_by_id(@work.contact_id)
+    @works = user_works.find_by_artist_id(@artist.id)
   end
 
   def admin_index
     @numworks = ADMIN_NUM_WORKS
     @page = (params[:page] || 1).to_i
-    @works = sort_works((params[:sort_by].to_i || 0), Work.all.offset(@numworks * (@page -1)))
+    @works = Work.sortWorks(Work.all.offset(@numworks * (@page - 1)).limit(@numworks), (params[:sort_by].to_i || 0))
     @total_works = @works.size
-    @works = @works.limit(@numworks)
   end
 
   def update
@@ -141,6 +129,19 @@ class WorksController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def work_params
       params.require(:work).permit(:eag_confirmed, :location)
+    end
+
+    def get_user_category_works
+      if current_user.admin?
+        return Work.all
+      elsif current_user.posters?
+        return Work.getPostersWorks()
+      elsif current_user.non_corporate?
+        return Work.getNonCorpWorks(true)
+      elsif current_user.corporate?
+        # corporate can't see any non-available fine art
+        return Work.getCorpWorks()
+      end
     end
 
 end

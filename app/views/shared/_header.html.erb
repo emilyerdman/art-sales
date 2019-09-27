@@ -12,12 +12,12 @@
       <div class="navbar-start">
         <% if current_user %>
           <%= link_to('Home', works_path, class: 'navbar-item') %>
-          <%= link_to('View Profile', user_path(current_user), class: 'navbar-item') %>
+          <%= link_to('My Profile', user_path(current_user), class: 'navbar-item') %>
+          <%= link_to('My Applications', user_apps_path, class: 'navbar-item') %>
           <% if current_user.admin? %>
-
             <%= link_to('Admin User Panel', users_path, class: 'navbar-item') %>
             <%= link_to('Admin Works Panel', works_admin_path, class: 'navbar-item') %>
-
+            <%= link_to('Admin Apps Panel', apps_admin_path, class: 'navbar-item') %>
           <% end %>
       </div>
       <div class='navbar-end'>

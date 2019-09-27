@@ -1,0 +1,33 @@
+<%= form_for [work, app], local: local do |form| %>          
+  <div class='content'>
+    <% if app.errors.any? %>
+      <div id="error_explanation">
+        <h3 class='subtitle'><%= pluralize(app.errors.count, "error") %> prohibited this application from being saved:</h3>
+
+        <ul>
+        <% app.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="field">
+    <%= form.label :organization, class: 'label' %>
+    <div class='control'>
+      <%= form.text_field :organization, id: :app_organization, class: 'input', value: app.organization %>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= form.label :comment, class: 'label' %>
+    <div class='control'>
+      <%= form.text_area :comment, id: :app_comment, class: 'input', value: app.comment %>
+    </div>
+  </div>         
+
+  <div class="control">
+    <%= form.submit('Submit', class: 'button') %>
+  </div>
+<% end %>

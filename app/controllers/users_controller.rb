@@ -39,7 +39,7 @@ class UsersController < ApplicationController
     @user.approved = false
     @user.category = User.categories['posters']
     @user.email = @user.email.downcase
-    if @user.save && verify_recaptcha
+    if verify_recaptcha && @user.save
       log_in @user
       flash[:success] = "Account created and user logged in successfully. You will need to wait for an administrator to approve your account before you can access the works. Please contact help@erdman-art-group.com with any questions or concerns."
       NewAccountMailer.new_account_email(@user).deliver_now
@@ -55,8 +55,8 @@ class UsersController < ApplicationController
     if current_user == @user && @user.update(user_params)
       redirect_to(@user, notice: 'User was successfully updated.')
     else
-      format.html { render :edit }
-      format.json { render json: @user.errors, status: :unprocessable_entity }
+      flash[:error] = 'Could not update user.'
+      render 'edit'
     end
   end
 

@@ -1,5 +1,3 @@
-<p id="notice"><%= notice %></p>
-
 <h1>Edit Works</h1>
   <h3><%= getPageCount(@page, @total_works, @numworks) %></h3>
   <div>
@@ -61,12 +59,12 @@
 
 <div>
    <ul class="pager" style="padding-left:10px">
-      <li class="previous <%= @page == 0 ? 'disabled' : '' %>" style="display:inline;padding-right:25px">
-          <%= link_to_if @page > 0, "<< Previous", works_path(filterParams.merge({page: @page - 1})) %>
+      <li class="previous <%= @page == 1 ? 'disabled' : '' %>" style="display:inline;padding-right:25px">
+          <%= link_to_if @page > 1, "<< Previous", works_admin_path(filterParams.merge({page: @page - 1})) %>
       </li>
       <span/>
       <li class="next" style="display:inline">
-          <%= link_to_if ((@page * @numworks) + @numworks) < @total_works, "Next >>", works_path(filterParams.merge({page: @page + 1})) %>
+          <%= link_to_if ((@page - 1 * @numworks) + @numworks) < @total_works, "Next >>", works_admin_path(filterParams.merge({page: @page + 1})) %>
       </li>
    </ul>
 </div>

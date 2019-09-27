@@ -1,6 +1,7 @@
 class Work < ApplicationRecord 
   belongs_to :artist, optional: true
   belongs_to :contact, optional: true
+  has_many :apps
   scope :art_type_filter, -> (param) { where(art_type: param)}
   scope :eag_availability_filter, -> (param) { where(eag_confirmed: param)}
   scope :availability_filter, -> (param) { where("current_owner #{param}") }
@@ -91,9 +92,8 @@ class Work < ApplicationRecord
         elsif !split[0].match? /\A\d+\z/
           return "Yes - %s" % self.frame_condition
         end
-      else
-        return "Yes"
       end
+      return "Yes"
     else
       return "Not Framed"
     end
@@ -179,8 +179,7 @@ class Work < ApplicationRecord
 
   def self.getPostersWorks()
     # poster user can only see posters (but none are EAG confirmed)
-    posters = Work.all.art_type_filter('POSTER').availability_filter('= 0')
-    return current_works
+    return Work.all.art_type_filter('POSTER').availability_filter('= 0')
   end
 
   def self.getNonCorpWorks(inc_retail_filter)

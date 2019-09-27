@@ -1,0 +1,20 @@
+<section class='section'>
+  <% if @apps.present? %>
+  <h1 class='title'>Your Applications</h1>
+  <table class='table'>
+    <tbody>
+      <% @apps.each do |app| %>
+        <tr>
+          <td><div class='notification has-text-weight-bold <%= if app.approved then 'has-background-success' else 'has-background-danger' end %>'><%= if app.approved then 'Approved' else 'Not Approved' end %></div></td>
+          <td><%= image_tag(app.work.getImageUrl, width: '200', alt: app.work.title) %></td>
+          <td><%= app.work.getArtist %><br/><%= simple_format(app.work.getDisplayInfo) %></td>
+          <td><%= link_to 'Edit', edit_work_app_path(app.work_id, app.id) %></td>
+          <td><%= link_to 'Delete', work_app_path(app.work_id, app.id), method: :delete, data: {confirm: 'Are you sure you want to delete this application?'  } %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% else %>
+    <h1 class='title'>You don't have any applications.</h1>
+  <% end %>
+</section>
