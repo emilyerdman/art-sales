@@ -33,7 +33,7 @@ gem 'bcrypt', '~> 3.1.7'
 
 # updated for security concerns
 gem "actionview", ">= 5.1.6.2"
-gem "rubyzip", ">= 1.2.2"
+gem "rubyzip", ">= 1.3.0"
 gem "ffi", ">= 1.9.24"
 gem "nokogiri", ">= 1.10.4"
 
