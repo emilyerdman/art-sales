@@ -25,6 +25,15 @@ log
 .byebug_history
 *.DS_Store
 
+# ignore database setup
+config/database.yml
+
+# ignore database backups
+backups/
+
+# ignore seed files
+lib/seeds/*
+
 public/assets/image
 public/assets/killipsian\ fine\ art
 public/assets/poster\ images\ for\ web

@@ -21,9 +21,9 @@
   </div>
 
   <div class="field">
-    <%= form.label :comment, class: 'label' %>
+    <%= form.label :comment, 'Why do you want this piece? (optional)', class: 'label' %>
     <div class='control'>
-      <%= form.text_area :comment, id: :app_comment, class: 'input', value: app.comment %>
+      <%= form.text_area :comment, id: :app_comment, class: 'textarea', rows: 5, value: app.comment %>
     </div>
   </div>         
 

@@ -1,358 +1,346 @@
-<% if !current_user %>
-  <section class='section'>
-    <h1 class='title'>Erdman Art Group Works</h1>
-    <h2 class='subtitle'>You must log in to view works.</h2>
-  </section>
-<% elsif !current_user.approved %>
-  <section class='section'>
-    <h1 class='title'>Erdman Art Group Works</h1>
-    <h2 class='subtitle'>You must be approved by the admin to view works.</h2>
-  </section>
-<% else %>
-  <h1 class='title'>Erdman Art Group Works</h1>
-  <h2 class='subtitle'><%= getPageCount(@page, @total_works, @numworks) %></h2>
+<h1 class='title'>Erdman Art Group Works</h1>
+<h2 class='subtitle'><%= getPageCount(@page, @total_works, @numworks) %></h2>
 
-  <%= form_with url: works_path, method: :get, skip_enforcing_utf8: true, local: true do |form| %>
-    <div class='tile is-ancestor is-vertical'>
-      <div class='tile is-parent box'>
-        <div class='tile is-child is-4 columns is-vcentered is-centered'>
-          <div class='field is-grouped'>
-            <div class='control'>
-              <label class='label'>List 
-                <div class='select'>
-                  <%= form.select('numworks', options_for_select( ["10", "25", "50", "100" ], @numworks), include_hidden: false) %>
-                </div>
-            works per page
-              </label>
-            </div>
-            <div class='control'>
-              <%= form.submit('GO', name: nil, class: 'button') %>
-            </div>
-          </div>
-        </div>
-        <div class='tile is-child is-4 columns is-vcentered is-centered'>
-          <div class='field is-grouped'>
-            <div class='control'>
-              <label class='label'>Sort By: </label>  <!-- fix the select options so they pass the correct values to the form-->
+<%= form_with url: works_path, method: :get, skip_enforcing_utf8: true, local: true do |form| %>
+  <div class='tile is-ancestor is-vertical'>
+    <div class='tile is-parent box'>
+      <div class='tile is-child is-4 columns is-vcentered is-centered'>
+        <div class='field is-grouped'>
+          <div class='control'>
+            <label class='label'>List 
               <div class='select'>
-                <%= form.select('sort_by', options_for_select([
-                ['Inventory No. (ASC)', 0],
-                ['Inventory No. (DESC)', 1],
-                ['Title (ASC)', 3],
-                ['Title (DESC)', 2],
-                ['Retail Value (ASC)', 5],
-                ['Retail Value (DESC)', 4]], @sort_by)) %>
+                <%= form.select('numworks', options_for_select( ["10", "25", "50", "100" ], @numworks), include_hidden: false) %>
               </div>
-            </div>
-            <div class='control'>
-              <%= form.submit('GO', name: nil, class: 'button') %>
-            </div>
+          works per page
+            </label>
           </div>
-        </div>
-        <div class='tile is-child is-4 columns is-centered is-vcentered'>
-          <div class='field is-grouped'>
-            <div class='control'>
-              <label class='label'>Search Works:</label>
-              <%= form.text_field('search', :value => params[:search], class: 'input') %>
-            </div>
-            <div class='control'>
-              <%= form.submit('GO', name: nil, class: 'button') %>
-            </div>
+          <div class='control'>
+            <%= form.submit('GO', name: nil, class: 'button') %>
           </div>
         </div>
       </div>
-
-      <div class='tile is-parent is-vertical box'>
-        <div class='tile is-parent '>
-          <div class='tile is-parent is-vertical'>
-            <div class='tile is-child is-6'>
-              <div class='field is-grouped'>
-                <div class='control'>
-                  <label class='label'>Filter By Category: </label>
-                </div>
-                <div class='control'>
-                  <%= form.radio_button('category_combo', 'AND', checked: params[:category_combo].eql?('AND'), id: 'category_combo_AND') %>
-                  <%= form.label('category_combo_AND', 'AND', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= form.radio_button('category_combo', 'OR', checked: params[:category_combo].eql?('OR'), id: 'category_combo_OR') %>
-                  <%= form.label('category_combo_OR', 'OR', class: 'checkbox') %>
-                </div>
-              </div>
-            </div>
-            <div class='tile is-parent'>
-              <div class='tile is-child is-4 '>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'NAUTICAL', params[:category].to_s.include?("NAUTICAL"), id: 'category_NAUTICAL') %>
-                  <%= label_tag('category_NAUTICAL', 'Nautical', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'TRAVEL', params[:category].to_s.include?("TRAVEL"), id: 'category_TRAVEL') %>
-                  <%= label_tag('category_TRAVEL', 'Travel', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'ASIAN', params[:category].to_s.include?("ASIAN"), id: 'category_ASIAN') %>
-                  <%= label_tag('category_ASIAN', 'Asian', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'FIGURATIVE', params[:category].to_s.include?("FIGURATIVE"), id: 'category_FIGURATIVE') %>
-                  <%= label_tag('category_FIGURATIVE', 'Figurative', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'ETHNIC', params[:category].to_s.include?("ETHNIC"), id: 'category_ETHNIC') %>
-                  <%= label_tag('category_ETHNIC', 'Ethnic', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'LANDSCAPE', params[:category].to_s.include?("LANDSCAPE"), id: 'category_LANDSCAPE') %>
-                  <%= label_tag('category_LANDSCAPE', 'Landscape', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'RELIGIOUS', params[:category].to_s.include?("RELIGIOUS"), id: 'category_RELIGIOUS') %>
-                  <%= label_tag('category_RELIGIOUS', 'Religious', class: 'checkbox') %>
-                </div>
-              </div> 
-              <div class='tile is-child is-4 '>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'WHIMSICAL', params[:category].to_s.include?("WHIMSICAL"), id: 'category_WHIMSICAL') %>
-                  <%= label_tag('category_WHIMSICAL', 'Whimsical', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'ABSTRACT', params[:category].to_s.include?("ABSTRACT"), id: 'category_ABSTRACT') %>
-                  <%= label_tag('category_ABSTRACT', 'Abstract', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'ANIMALS', params[:category].to_s.include?("ANIMALS"), id: 'category_ANIMALS') %>
-                  <%= label_tag('category_ANIMALS', 'Animals', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'DECORATIVE', params[:category].to_s.include?("DECORATIVE"), id: 'category_DECORATIVE') %>
-                  <%= label_tag('category_DECORATIVE', 'Decorative', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'FLORAL', params[:category].to_s.include?("FLORAL"), id: 'category_FLORAL') %>
-                  <%= label_tag('category_FLORAL', 'Floral', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'REALISM', params[:category].to_s.include?("REALISM"), id: 'category_REALISM') %>
-                  <%= label_tag('category_REALISM', 'Realism', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'ARCHITECTURE', params[:category].to_s.include?("ARCHITECTURE"), id: 'category_ARCHITECTURE') %>
-                  <%= label_tag('category_ARCHITECTURE', 'Architecture', class: 'checkbox') %>
-                </div>
-              </div>
-              <div class='tile is-child is-4'>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'SPORTS', params[:category].to_s.include?("SPORTS"), id: 'category_SPORTS') %>
-                  <%= label_tag('category_SPORTS', 'Sports', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'TRANSPORTATION', params[:category].to_s.include?("TRANSPORTATION"), id: 'category_TRANSPORTATION') %>
-                  <%= label_tag('category_TRANSPORTATION', 'Transportation', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'FIBER ART', params[:category].to_s.include?("FIBER ART"), id: 'category_FIBER_ART') %>
-                  <%= label_tag('category_FIBER_ART', 'Fiber Art', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'STILL LIFE', params[:category].to_s.include?("STILL LIFE"), id: 'category_STILL_LIFE') %>
-                  <%= label_tag('category_STILL_LIFE', 'Still Life', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'PHOTOGRAPHY', params[:category].to_s.include?("PHOTOGRAPHY"), id: 'category_PHOTOGRAPHY') %>
-                  <%= label_tag('category_PHOTOGRAPHY', 'Photography', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'RURAL', params[:category].to_s.include?("RURAL"), id: 'category_RURAL') %>
-                  <%= label_tag('category_RURAL', 'Rural', class: 'checkbox') %>
-                </div>
-                <div class='control'>
-                  <%= check_box_tag('category[]', 'URBAN', params[:category].to_s.include?("URBAN"), id: 'category_URBAN') %>
-                  <%= label_tag('category_URBAN', 'Urban', class: 'checkbox') %>
-                </div>
-              </div>
+      <div class='tile is-child is-4 columns is-vcentered is-centered'>
+        <div class='field is-grouped'>
+          <div class='control'>
+            <label class='label'>Sort By: </label>  <!-- fix the select options so they pass the correct values to the form-->
+            <div class='select'>
+              <%= form.select('sort_by', options_for_select([
+              ['Inventory No. (ASC)', 0],
+              ['Inventory No. (DESC)', 1],
+              ['Title (ASC)', 3],
+              ['Title (DESC)', 2],
+              ['Retail Value (ASC)', 5],
+              ['Retail Value (DESC)', 4]], @sort_by)) %>
             </div>
           </div>
-        
+          <div class='control'>
+            <%= form.submit('GO', name: nil, class: 'button') %>
+          </div>
+        </div>
+      </div>
+      <div class='tile is-child is-4 columns is-centered is-vcentered'>
+        <div class='field is-grouped'>
+          <div class='control'>
+            <label class='label'>Search Works:</label>
+            <%= form.text_field('search', :value => params[:search], class: 'input') %>
+          </div>
+          <div class='control'>
+            <%= form.submit('GO', name: nil, class: 'button') %>
+          </div>
+        </div>
+      </div>
+    </div>
 
-          <div class='tile is-parent is-vertical'>           
-            <% if !@current_user.posters? %>
-                        <div class='tile is-child is-6 '>
-              <div class='field is-grouped'>
+    <div class='tile is-parent is-vertical box'>
+      <div class='tile is-parent '>
+        <div class='tile is-parent is-vertical'>
+          <div class='tile is-child is-6'>
+            <div class='field is-grouped'>
               <div class='control'>
-                <label class='label'>Additional Filters:</label>
+                <label class='label'>Filter By Category: </label>
+              </div>
+              <div class='control'>
+                <%= form.radio_button('category_combo', 'AND', checked: params[:category_combo].eql?('AND'), id: 'category_combo_AND') %>
+                <%= form.label('category_combo_AND', 'AND', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= form.radio_button('category_combo', 'OR', checked: params[:category_combo].eql?('OR'), id: 'category_combo_OR') %>
+                <%= form.label('category_combo_OR', 'OR', class: 'checkbox') %>
               </div>
             </div>
           </div>
-          <div class='tile is-parent'>  
-              <div class='tile is-child is-2'>
-                <label class='label'>Art Type</label>
-                <div class='control'>
-                  <%= form.radio_button('art_type', 'POSTER', checked: params[:art_type].eql?('POSTER'), id: 'art_type_POSTER') %>
-                  <%= form.label('art_type_POSTER', "Poster", class: 'radio') %>
-                </div>
-                <div class='control'>
-                  <%= form.radio_button('art_type', 'FINE ART', checked: params[:art_type].eql?('FINE ART'), id: 'art_type_FINE ART') %>
-                  <%= form.label('art_type_FINE ART', "Fine Art", class: 'radio') %>
-                </div>
-                <div class='control'>
-                  <%= form.radio_button('art_type', '', checked: !params[:art_type].present?, id: 'art_type') %>
-                  <%= form.label('art_type', 'All', class: 'radio') %>
-                </div>
+          <div class='tile is-parent'>
+            <div class='tile is-child is-4 '>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'NAUTICAL', params[:category].to_s.include?("NAUTICAL"), id: 'category_NAUTICAL') %>
+                <%= label_tag('category_NAUTICAL', 'Nautical', class: 'checkbox') %>
               </div>
-              <% if @current_user.admin? %>
-                <div class='tile is-child is-2'>
-                  <label class='label'>Availability</label>
-                  <div class='control'>
-                    <%= form.radio_button('availability', '0', checked: params[:availability].eql?("0"), id: 'availability_SOLD') %>
-                    <%= form.label('availability_SOLD', 'Sold', class: 'radio') %>
-                  </div>
-                  <div class='control'>
-                    <%= form.radio_button('availability', '1', checked: params[:availability].eql?("1"), id: 'availability_AVAILABLE') %>
-                    <%= form.label('availability_AVAILABLE', 'Available', class: 'radio') %>
-                  </div>
-                  <div class='control'>
-                    <%= form.radio_button('availability', '', checked: !params[:availability].present?, id: 'availability') %>
-                    <%= form.label('availability', 'All', class: 'radio') %>
-                  </div>
-                </div>
-              <% end %>
-              <div class='tile is-child is-2'>
-                <label class='label'>Framed?</label>
-                <div class='control'>
-                  <%= form.radio_button('framed', '1', checked: params[:framed].eql?('1'), id: 'framed_t') %>
-                  <%= form.label('framed_t', 'Yes', class: 'radio') %>
-                </div>  
-                <div class='control'>
-                  <%= form.radio_button('framed', '0', checked: params[:framed].eql?('0'), id: 'framed_f') %>
-                  <%= form.label('framed_f', 'No', class: 'radio') %>
-                </div>
-                <div class='control'>
-                  <%= form.radio_button('framed', '', checked: !params[:framed].present?, id: 'framed') %>
-                  <%= form.label('framed', 'All', class: 'radio') %>
-                </div> 
-              </div>             
-              <% if @current_user.corporate? || @current_user.admin? %>
-                <div class='tile is-child is-4'>
-                  <label class='label'>Collection</label>
-                  <div class='control'>
-                    <%= form.radio_button('collection', 'CORP', checked: params[:collection].eql?("CORP"), id: 'collection_CORP') %>
-                    <%= form.label('collection_CORP', 'Corporate Collection', class: 'radio') %>
-                  </div>
-                  <div class='control'>
-                    <%= form.radio_button('collection', 'NONCORP', checked: params[:collection].eql?("NONCORP"), id: 'collection_NONCORP') %>
-                    <%= form.label('collection_NONCORP', 'Non Corporate Collection', class: 'radio') %>
-                  </div>
-                  <div class='control'>
-                    <%= form.radio_button('collection', '', checked: !params[:collection].present?, id: 'collection_ALL') %>
-                    <%= form.label('collection', 'All', class: 'radio') %>
-                  </div>
-                </div>
-              <% end %>
-              <div class='tile is-child is-2'>
-                <label class='label'>Unique</label>
-                <div class='control'>
-                  <%= check_box_tag('unique', '1', params[:unique].eql?('1'), id: 'unique') %>
-                  <%= label_tag('unique', 'Unique', class: 'checkbox') %>
-                </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'TRAVEL', params[:category].to_s.include?("TRAVEL"), id: 'category_TRAVEL') %>
+                <%= label_tag('category_TRAVEL', 'Travel', class: 'checkbox') %>
               </div>
-            <% end %>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'ASIAN', params[:category].to_s.include?("ASIAN"), id: 'category_ASIAN') %>
+                <%= label_tag('category_ASIAN', 'Asian', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'FIGURATIVE', params[:category].to_s.include?("FIGURATIVE"), id: 'category_FIGURATIVE') %>
+                <%= label_tag('category_FIGURATIVE', 'Figurative', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'ETHNIC', params[:category].to_s.include?("ETHNIC"), id: 'category_ETHNIC') %>
+                <%= label_tag('category_ETHNIC', 'Ethnic', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'LANDSCAPE', params[:category].to_s.include?("LANDSCAPE"), id: 'category_LANDSCAPE') %>
+                <%= label_tag('category_LANDSCAPE', 'Landscape', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'RELIGIOUS', params[:category].to_s.include?("RELIGIOUS"), id: 'category_RELIGIOUS') %>
+                <%= label_tag('category_RELIGIOUS', 'Religious', class: 'checkbox') %>
+              </div>
+            </div> 
+            <div class='tile is-child is-4 '>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'WHIMSICAL', params[:category].to_s.include?("WHIMSICAL"), id: 'category_WHIMSICAL') %>
+                <%= label_tag('category_WHIMSICAL', 'Whimsical', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'ABSTRACT', params[:category].to_s.include?("ABSTRACT"), id: 'category_ABSTRACT') %>
+                <%= label_tag('category_ABSTRACT', 'Abstract', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'ANIMALS', params[:category].to_s.include?("ANIMALS"), id: 'category_ANIMALS') %>
+                <%= label_tag('category_ANIMALS', 'Animals', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'DECORATIVE', params[:category].to_s.include?("DECORATIVE"), id: 'category_DECORATIVE') %>
+                <%= label_tag('category_DECORATIVE', 'Decorative', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'FLORAL', params[:category].to_s.include?("FLORAL"), id: 'category_FLORAL') %>
+                <%= label_tag('category_FLORAL', 'Floral', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'REALISM', params[:category].to_s.include?("REALISM"), id: 'category_REALISM') %>
+                <%= label_tag('category_REALISM', 'Realism', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'ARCHITECTURE', params[:category].to_s.include?("ARCHITECTURE"), id: 'category_ARCHITECTURE') %>
+                <%= label_tag('category_ARCHITECTURE', 'Architecture', class: 'checkbox') %>
+              </div>
+            </div>
+            <div class='tile is-child is-4'>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'SPORTS', params[:category].to_s.include?("SPORTS"), id: 'category_SPORTS') %>
+                <%= label_tag('category_SPORTS', 'Sports', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'TRANSPORTATION', params[:category].to_s.include?("TRANSPORTATION"), id: 'category_TRANSPORTATION') %>
+                <%= label_tag('category_TRANSPORTATION', 'Transportation', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'FIBER ART', params[:category].to_s.include?("FIBER ART"), id: 'category_FIBER_ART') %>
+                <%= label_tag('category_FIBER_ART', 'Fiber Art', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'STILL LIFE', params[:category].to_s.include?("STILL LIFE"), id: 'category_STILL_LIFE') %>
+                <%= label_tag('category_STILL_LIFE', 'Still Life', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'PHOTOGRAPHY', params[:category].to_s.include?("PHOTOGRAPHY"), id: 'category_PHOTOGRAPHY') %>
+                <%= label_tag('category_PHOTOGRAPHY', 'Photography', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'RURAL', params[:category].to_s.include?("RURAL"), id: 'category_RURAL') %>
+                <%= label_tag('category_RURAL', 'Rural', class: 'checkbox') %>
+              </div>
+              <div class='control'>
+                <%= check_box_tag('category[]', 'URBAN', params[:category].to_s.include?("URBAN"), id: 'category_URBAN') %>
+                <%= label_tag('category_URBAN', 'Urban', class: 'checkbox') %>
+              </div>
             </div>
           </div>
         </div>
-        <div class='tile is-parent'>
-          <div class='tile is-child'>
-            <div class='level'>
-              <div class='level-item'>
-                <div class='field is-grouped'>
-                  <div class='control'>
-                  <%= form.submit('Go', name: nil, class: 'button is-large') %>
-                  </div>
-                  <div class='control'>
-                  <%= link_to 'Clear All', works_path, class: 'button is-large is-text' %>
-                  </div>
+      
+
+        <div class='tile is-parent is-vertical'>           
+          <% if !@current_user.posters? %>
+                      <div class='tile is-child is-6 '>
+            <div class='field is-grouped'>
+            <div class='control'>
+              <label class='label'>Additional Filters:</label>
+            </div>
+          </div>
+        </div>
+        <div class='tile is-parent'>  
+            <div class='tile is-child is-2'>
+              <label class='label'>Art Type</label>
+              <div class='control'>
+                <%= form.radio_button('art_type', 'POSTER', checked: params[:art_type].eql?('POSTER'), id: 'art_type_POSTER') %>
+                <%= form.label('art_type_POSTER', "Poster", class: 'radio') %>
+              </div>
+              <div class='control'>
+                <%= form.radio_button('art_type', 'FINE ART', checked: params[:art_type].eql?('FINE ART'), id: 'art_type_FINE ART') %>
+                <%= form.label('art_type_FINE ART', "Fine Art", class: 'radio') %>
+              </div>
+              <div class='control'>
+                <%= form.radio_button('art_type', '', checked: !params[:art_type].present?, id: 'art_type') %>
+                <%= form.label('art_type', 'All', class: 'radio') %>
+              </div>
+            </div>
+            <% if @current_user.admin? %>
+              <div class='tile is-child is-2'>
+                <label class='label'>Availability</label>
+                <div class='control'>
+                  <%= form.radio_button('availability', '0', checked: params[:availability].eql?("0"), id: 'availability_SOLD') %>
+                  <%= form.label('availability_SOLD', 'Sold', class: 'radio') %>
+                </div>
+                <div class='control'>
+                  <%= form.radio_button('availability', '1', checked: params[:availability].eql?("1"), id: 'availability_AVAILABLE') %>
+                  <%= form.label('availability_AVAILABLE', 'Available', class: 'radio') %>
+                </div>
+                <div class='control'>
+                  <%= form.radio_button('availability', '', checked: !params[:availability].present?, id: 'availability') %>
+                  <%= form.label('availability', 'All', class: 'radio') %>
+                </div>
+              </div>
+            <% end %>
+            <div class='tile is-child is-2'>
+              <label class='label'>Framed?</label>
+              <div class='control'>
+                <%= form.radio_button('framed', '1', checked: params[:framed].eql?('1'), id: 'framed_t') %>
+                <%= form.label('framed_t', 'Yes', class: 'radio') %>
+              </div>  
+              <div class='control'>
+                <%= form.radio_button('framed', '0', checked: params[:framed].eql?('0'), id: 'framed_f') %>
+                <%= form.label('framed_f', 'No', class: 'radio') %>
+              </div>
+              <div class='control'>
+                <%= form.radio_button('framed', '', checked: !params[:framed].present?, id: 'framed') %>
+                <%= form.label('framed', 'All', class: 'radio') %>
+              </div> 
+            </div>             
+            <% if @current_user.corporate? || @current_user.admin? %>
+              <div class='tile is-child is-4'>
+                <label class='label'>Collection</label>
+                <div class='control'>
+                  <%= form.radio_button('collection', '1', checked: params[:collection].eql?("1"), id: 'collection_CORP') %>
+                  <%= form.label('collection_CORP', 'Corporate Collection', class: 'radio') %>
+                </div>
+                <div class='control'>
+                  <%= form.radio_button('collection', '0', checked: params[:collection].eql?("0"), id: 'collection_NONCORP') %>
+                  <%= form.label('collection_NONCORP', 'Non Corporate Collection', class: 'radio') %>
+                </div>
+                <div class='control'>
+                  <%= form.radio_button('collection', '', checked: !params[:collection].present?, id: 'collection_ALL') %>
+                  <%= form.label('collection', 'All', class: 'radio') %>
+                </div>
+              </div>
+            <% end %>
+            <div class='tile is-child is-2'>
+              <label class='label'>Unique</label>
+              <div class='control'>
+                <%= check_box_tag('unique', '1', params[:unique].eql?('1'), id: 'unique') %>
+                <%= label_tag('unique', 'Unique', class: 'checkbox') %>
+              </div>
+            </div>
+          <% end %>
+          </div>
+        </div>
+      </div>
+      <div class='tile is-parent'>
+        <div class='tile is-child'>
+          <div class='level'>
+            <div class='level-item'>
+              <div class='field is-grouped'>
+                <div class='control'>
+                <%= form.submit('Go', name: nil, class: 'button is-large') %>
+                </div>
+                <div class='control'>
+                <%= link_to 'Clear All', works_path, class: 'button is-large is-text' %>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    <% end %>
+    </div>
+  <% end %>
 
-  <div class='tile is-child is-12'>
-    <div class='container'>
-      <% if @works.size > 0 %>
-        <table class='table'>
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>Piece Info</th>
-              <th>Inventory No.</th>
-              <th>Type</th>
-              <th>Category</th>
-              <% if @current_user.admin? %>
-                <th>Retail Value</th>
-              <% end %>
-              <th>Framed</th>
-              <% if @current_user.admin? %>
-                <th>Available</th>
-                <th>Location</th>
-              <% end %>
-            </tr>
-          </thead>
-
-          <% @works.each do |work| %>
+<div class='tile is-child is-12'>
+  <div class='container'>
+    <% if @works.size > 0 %>
+      <table class='table'>
+        <thead>
           <tr>
-            <td><%= link_to(image_tag(work.getImageUrl, width: '200', alt: work.title), work) %></td>
-            <td><%= work.getArtist %><br/><%= simple_format(work.getDisplayInfo) %></td>
-            <td><%= work.inventory_number %></td>
-            <td><%= work.art_type %></td>
-            <td><%= work.getCategory %></td>
+            <th>Image</th>
+            <th>Piece Info</th>
+            <th>Inventory No.</th>
+            <th>Type</th>
+            <th>Category</th>
             <% if @current_user.admin? %>
-              <td><%= work.getRetailValue %></td>
+              <th>Retail Value</th>
             <% end %>
-            <td><%= work.getFrame %></td>
+            <th>Framed</th>
             <% if @current_user.admin? %>
-              <td><%= simple_format(work.getAvailability) %> </td>
-              <td><%= simple_format(work.getLocation) %> </td>
+              <th>Available</th>
+              <th>Location</th>
             <% end %>
           </tr>
-          <% end %>
-        </table>
-      <% else %>
-        <div class='level'>
-          <h3 class='subtitle level-item'>No results found</h3>
-        </div>
-      <% end %>
-    </div>
-  </div>
+        </thead>
 
-  <div class='tile is-child is-12'>
-    <nav class='pagination is-centered' role='navigation'>
-        <%= link_to "<< Previous", works_path(filterParams.merge({page: @page - 1})), class: 'pagination-previous', disabled: (@page < 2) %>
-        <%= link_to "Next >>", works_path(filterParams.merge({page: @page + 1})), class: 'pagination-next', disabled: ((@page * @numworks) > @total_works) %>
-        <ul class="pagination-list">
-          <% @pager[0].each do |x| %>
-            <li><%= link_to x, works_path(filterParams.merge({page: x})), class: "pagination-link %s" % ((@page == x) ? 'is-current' : '')%></li>
+        <% @works.each do |work| %>
+        <tr>
+          <td><%= link_to(image_tag(work.getImageUrl, width: '200', alt: work.title), work) %></td>
+          <td><%= work.getArtist %><br/><%= simple_format(work.getDisplayInfo) %></td>
+          <td><%= work.inventory_number %></td>
+          <td><%= work.art_type %></td>
+          <td><%= work.getCategory %></td>
+          <% if @current_user.admin? %>
+            <td><%= work.getRetailValue %></td>
           <% end %>
-          <% if @pager[1].any? %>
-            <li>
-              <span class='pagination-ellipsis'>&hellip;</span>
-            </li>
+          <td><%= work.getFrame %></td>
+          <% if @current_user.admin? %>
+            <td><%= simple_format(work.getAvailability) %> </td>
+            <td><%= simple_format(work.getLocation) %> </td>
           <% end %>
-          <% @pager[1].each do |x| %>
-            <li><%= link_to x, works_path(filterParams.merge({page: x})), class: "pagination-link %s" % ((@page == x) ? 'is-current' : '') %></li>
-          <% end %>
-          <% if @pager[2].any? %>
-            <li>
-              <span class='pagination-ellipsis'>&hellip;</span>
-            </li>
-          <% end %>
-          <% @pager[2].each do |x| %>
-            <li><%= link_to x, works_path(filterParams.merge({page: x})), class: "pagination-link %s" % ((@page == x) ? 'is-current' : '') %></li>
-          <% end %>
-          <span/>
-       </ul>
-    </nav>
+        </tr>
+        <% end %>
+      </table>
+    <% else %>
+      <div class='level'>
+        <h3 class='subtitle level-item'>No results found</h3>
+      </div>
+    <% end %>
   </div>
-<% end %>
+</div>
+
+<div class='tile is-child is-12'>
+  <nav class='pagination is-centered' role='navigation'>
+      <%= link_to "<< Previous", works_path(filterParams.merge({page: @page - 1})), class: 'pagination-previous', disabled: (@page < 2) %>
+      <%= link_to "Next >>", works_path(filterParams.merge({page: @page + 1})), class: 'pagination-next', disabled: ((@page * @numworks) > @total_works) %>
+      <ul class="pagination-list">
+        <% @pager[0].each do |x| %>
+          <li><%= link_to x, works_path(filterParams.merge({page: x})), class: "pagination-link %s" % ((@page == x) ? 'is-current' : '')%></li>
+        <% end %>
+        <% if @pager[1].any? %>
+          <li>
+            <span class='pagination-ellipsis'>&hellip;</span>
+          </li>
+        <% end %>
+        <% @pager[1].each do |x| %>
+          <li><%= link_to x, works_path(filterParams.merge({page: x})), class: "pagination-link %s" % ((@page == x) ? 'is-current' : '') %></li>
+        <% end %>
+        <% if @pager[2].any? %>
+          <li>
+            <span class='pagination-ellipsis'>&hellip;</span>
+          </li>
+        <% end %>
+        <% @pager[2].each do |x| %>
+          <li><%= link_to x, works_path(filterParams.merge({page: x})), class: "pagination-link %s" % ((@page == x) ? 'is-current' : '') %></li>
+        <% end %>
+        <span/>
+     </ul>
+  </nav>
+</div>

@@ -5,7 +5,7 @@ class User < ApplicationRecord
 
   def getAddressString
     user = self
-    "%s\n%s,%s %s\n%s" % [user.address['street_address'], user.address['city'], user.address['state'], user.address['zip'], user.address['country']]
+    "%s\n%s, %s %s\n%s" % [user.address['street_address'], user.address['city'], user.address['state'], user.address['zip'], user.address['country']]
   end
 
   def approve_user(boolean_val)

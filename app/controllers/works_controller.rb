@@ -16,7 +16,11 @@ class WorksController < ApplicationController
   # retail value asc = 7
   
   def all
-    if current_user && current_user.approved    
+    if !current_user
+      render 'no_user'
+    elsif !current_user.approved
+      render 'not_approved'
+    else   
       @category_combo = (params[:category_combo] || "AND")
       @sort_by = (params[:sort_by] || 0)
       @works = Work.none

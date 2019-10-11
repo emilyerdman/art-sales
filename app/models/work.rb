@@ -37,14 +37,14 @@ class Work < ApplicationRecord
     if height.blank? || width.blank?
       return ''
     end
-    if (!heightnum.blank? || !heightden.blank?) 
+    if (!heightnum.blank? && !heightden.blank?) 
       height = "%s %s/%s" % [height, heightnum, heightden]
     end
-    if (!widthnum.blank? || !widthden.blank?)
+    if (!widthnum.blank? && !widthden.blank?)
       width = "%s %s/%s" % [width, widthnum, widthden]
     end
     if (!depth.blank?)
-      if (!depthnum.blank? || !depthden.blank?)
+      if (!depthnum.blank? && !depthden.blank?)
         depth = "%s %s/%s" % [depth, depthnum, depthden]
       end
       return "%s x %s x %s inches" % [height, width, depth]
@@ -54,7 +54,7 @@ class Work < ApplicationRecord
   end
 
   def getCategory
-    if self.category.match? /\w+/
+    if !self.category.blank? && (self.category.match? /\w+/)
       return self.category
     else
       return ''
@@ -108,12 +108,16 @@ class Work < ApplicationRecord
   end
 
   def getOwner
-    if self.current_owner > 0
-      return Contact.find(self.current_owner)
-    elsif self.contact_id > -1
-      return Contact.find(self.contact_id)
-    elsif !self.sold && self.erdman
-      return Contact.find(2518) # this is the Erdman Art Group contact
+    if !self.current_owner.blank? 
+      if self.current_owner > 0
+        return Contact.find(self.current_owner)
+      end
+    elsif !self.contact_id.blank?
+      if self.contact_id > -1
+        return Contact.find(self.contact_id)
+      elsif !self.sold && self.erdman
+        return Contact.find(2518) # this is the Erdman Art Group contact
+      end
     else
       return nil
     end
@@ -127,8 +131,7 @@ class Work < ApplicationRecord
         else ', '+self.full_year 
         end, 
         self.media, 
-        self.getDimensions, 
-        self.getEdition]
+        self.getDimensions]
     if !self.getEdition.blank?
       info += "\n\n%s" % self.getEdition
     end
@@ -139,7 +142,7 @@ class Work < ApplicationRecord
     if self.eag_confirmed
       return 'Yes'
     else
-      if self.current_owner > 0
+      if !self.current_owner.blank? && self.current_owner > 0
         return "No - Sold To %s" % Contact.find(self.current_owner).getName
       else
         return 'Possibly'
@@ -159,7 +162,7 @@ class Work < ApplicationRecord
           location += contact.getInfo
         end
       else
-        location += self.location
+        return "Unknown"
       end
     end
     if !self.bin.blank?
@@ -170,11 +173,7 @@ class Work < ApplicationRecord
 
   def isCorporateCollection
     # coporate collection contact id = 2169
-    contact = Contact.find(self.location)
-    if contact.id == "2169"
-      return true
-    end
-    return false
+    return !self.location.blank? && self.location == "2169"
   end
 
   def self.getPostersWorks()
@@ -209,8 +208,7 @@ class Work < ApplicationRecord
   end
 
   def self.filterByAvailability(works, availability)
-    puts 'filtering'
-    if availability.eql?('1')
+    if ActiveModel::Type::Boolean.new.cast(availability)
       posters_available = works.art_type_filter('POSTER').availability_filter('= 0')
       eag_confirmed = works.eag_availability_filter(true)
       return posters_available.or(eag_confirmed)
@@ -226,9 +224,9 @@ class Work < ApplicationRecord
   end
 
   def self.filterByCollection(works, collection)
-    if collection.eql?('CORP')
+    if ActiveModel::Type::Boolean.new.cast(collection)
       return works.corp_coll_filter(true)
-    elsif collection.eql?('NONCORP')
+    else
       return works.corp_coll_filter(false)
     end
   end

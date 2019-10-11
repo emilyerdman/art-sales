@@ -22,6 +22,8 @@ class Contact < ApplicationRecord
       else
         info = self.institution
       end
+    elsif !self.first_name.blank? && !self.last_name.blank?
+      info = "%s %s" % [first_name, last_name]
     end
     return info
   end
