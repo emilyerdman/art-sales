@@ -178,13 +178,13 @@ class Work < ApplicationRecord
 
   def self.getPostersWorks()
     # poster user can only see posters (but none are EAG confirmed)
-    return Work.all.art_type_filter('POSTER').availability_filter('= 0')
+    return Work.all.art_type_filter("POSTER").availability_filter('= 0')
   end
 
   def self.getNonCorpWorks(inc_retail_filter)
     # non corporate can see posters + non corp coll available
     # non corporate can't see any corporate or any non-available fine art
-    non_corporate = Work.all.art_type_filter('FINE ART').corp_coll_filter(false).eag_availability_filter(true)
+    non_corporate = Work.all.art_type_filter("FINE ART").corp_coll_filter(false).eag_availability_filter(true)
     posters = getPostersWorks()
     works = posters.or(non_corporate)
     # add additional filters
@@ -199,11 +199,12 @@ class Work < ApplicationRecord
 
   def self.getCorpWorks()
     #corporate can see posters + non corp coll available + corp coll available
-    corporate = Work.all.art_type_filter('FINE ART').eag_availability_filter(true)
+    corporate = Work.all.art_type_filter("FINE ART").eag_availability_filter(true)
     return getPostersWorks().or(getNonCorpWorks(false).or(corporate))
   end
 
   def self.filterByArtType(works, art_type)
+    puts "art type:%s" % art_type
     return works.art_type_filter(art_type)
   end
 
@@ -242,16 +243,19 @@ class Work < ApplicationRecord
     if operator.eql?("OR")
       all_filtered = Work.none
     else
-      all_filtered = works
+      all_filtered = Work.all.pluck(:id)
     end
     categories.each do |category|
       filtered = works.category_filter(category)
       if operator.eql?("OR")
         all_filtered = filtered.or(all_filtered)
       else
-        all_filtered = filtered.merge(all_filtered)
+        all_filtered = filtered.pluck(:id) & all_filtered
       end
      end
+    if operator.eql?("AND")
+      all_filtered = Work.where(id: all_filtered)
+    end
     return all_filtered
   end
 

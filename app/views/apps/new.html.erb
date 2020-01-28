@@ -7,6 +7,12 @@
           <%= render 'form', app: @app, work: @work, local: true %>
         </div>
       </div>
+      <div class='tile is-parent is-6'>
+        <div class='tile is-child'>
+          <%= link_to(image_tag(@work.getImageUrl, width: '500', alt: @work.title), @work) %>
+          <p class='subtitle'><%= @work.title %> BY <%= @work.getArtist %></p>
+        </div>
+      </div>
     </div>
   </section>
 </section>

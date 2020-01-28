@@ -3,7 +3,16 @@ class AppsController < ApplicationController
   before_action :set_work, only: [:new, :show, :edit, :update, :destroy, :create]
 
   def new
-    @app = App.new(work_id: @work.id)
+    if current_user
+      if App.exists?(user_id: current_user.id, work_id: @work.id)
+        @app = App.find_by(user_id: current_user.id, work_id: @work.id)
+        render 'app_exists'
+      else
+        @app = App.new(work_id: @work.id)
+      end
+    else 
+      render file: "#{Rails.root}/public/404", status: :not_found
+    end 
   end
 
   def create

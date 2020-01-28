@@ -4,7 +4,7 @@
     <div class='tile is-ancestor'>
       <div class='tile is-parent'>
         <div class='tile is-child'>
-          <%= image_tag(@work.getImageUrl, width: '500', alt: @work.title) %>
+          <%= link_to(image_tag(@work.getImageUrl, width: '500', alt: @work.title), @work) %>
           <p class='subtitle'><%= @work.getArtist %><br/><%= simple_format(@work.getDisplayInfo) %></p>
         </div>
       </div>
@@ -24,7 +24,7 @@
     <% if current_user == @app.user %>
       <%= link_to 'Edit', edit_work_app_path(@work, @app), class: 'button' %>
     <% end %>
-    <%= link_to 'Delete', work_app_path(@work, @app), method: :delete, class: 'button', data: {confirm: 'Are you sure you want to delete this application?'} %>
+    <%= link_to 'Delete', work_app_path(@work, @app), method: :delete, class: 'button is-danger has-text-dark', data: {confirm: 'Are you sure you want to delete this application?'} %>
     <%= link_to 'Back to Applications', user_apps_path, class: 'button' %>
   </div>
 </section>

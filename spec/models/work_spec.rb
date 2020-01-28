@@ -1,7 +1,5 @@
 describe Work, :type => :model do
-  subject {
-    
-  }
+
   describe '#getArtist' do
     it 'returns the artist name if it exists' do
       work = Work.new(artist: Artist.new(first_name: "Test", last_name: "Testy", dates: '1991-'))
@@ -477,16 +475,19 @@ describe Work, :type => :model do
     it 'filters out duplicates' do
       artists = create_list(:artist, 10)
       dups = create_list(:work, 5, title: 'SAME', artist_id: 10)
-      not_dups = create_list(:not_dups, 10)
+      not_dups = create_list(:not_dups, 5)
       works = Work.filterUnique(Work.all)
-      expect(works.size).to be 11
+      expect(works.size).to be 6
     end
 
+# the problem is that it starts creating new artists where the last one stopped
     it 'returns all if no dups' do
-      artists = create_list(:artist, 7)
-      not_dups = create_list(:not_dups, 7)
+      %w(11, 12, 13, 14, 15).map do |i|
+        create(:artist, id: i)
+      end
+      not_dups = create_list(:not_dups, 5)
       works = Work.filterUnique(Work.all)
-      expect(works.size).to be 7
+      expect(works.size).to be 5
     end
   end
 

@@ -15,9 +15,16 @@
           <%= link_to('My Profile', user_path(current_user), class: 'navbar-item') %>
           <%= link_to('My Applications', user_apps_path, class: 'navbar-item') %>
           <% if current_user.admin? %>
-            <%= link_to('Admin User Panel', users_path, class: 'navbar-item') %>
-            <%= link_to('Admin Works Panel', works_admin_path, class: 'navbar-item') %>
-            <%= link_to('Admin Apps Panel', apps_admin_path, class: 'navbar-item') %>
+          <div class="navbar-item has-dropdown">
+              <a class='navbar-link'>
+              Admin Panels
+            </a>
+            <div class='navbar-dropdown'>
+              <%= link_to('User Panel', users_path, class: 'navbar-item') %>
+              <%= link_to('Works Panel', works_admin_path, class: 'navbar-item') %>
+              <%= link_to('Apps Panel', apps_admin_path, class: 'navbar-item') %>
+            </div>
+          </div>
           <% end %>
       </div>
       <div class='navbar-end'>

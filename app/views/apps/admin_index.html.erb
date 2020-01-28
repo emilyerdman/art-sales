@@ -8,6 +8,8 @@
       <th>Work Image</th>
       <th>Work Info</th>
       <th>Approved?</th>
+      <th></th>
+      <th></th>
     </tr>
   </thead>
 
@@ -15,15 +17,15 @@
     <% @apps.each do |app| %>
       <tr>
         <td><%= '%s %s' % [app.user.first_name, app.user.last_name] %></td>
-        <td><%= app.user.company %> </td>
+        <td><%= app.getOrganization() %> </td>
         <td><%= link_to(image_tag(app.work.getImageUrl, width: '200', alt: app.work.title), app.work) %></td>
         <td><%= app.work.getArtist %><br/><%= simple_format(app.work.getDisplayInfo) %></td>
         <td><%= app.approved %></td>
         <td><%= link_to 'View Details', work_app_path(app.work, app), class: 'button' %> </td>
         <% if !app.approved %>
-          <td><%= link_to 'Approve', approve_app_path(app) %></td>
+          <td><%= link_to 'Approve', approve_app_path(app), class: 'button is-success' %></td>
         <% else %>
-          <td><%= link_to 'Dis-Approve', disapprove_app_path(app) %></td>
+          <td><%= link_to 'Dis-Approve', disapprove_app_path(app), class: 'button is-danger' %></td>
         <% end %>
       </tr>
     <% end %>

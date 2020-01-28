@@ -11,8 +11,8 @@ FactoryBot.define do
   end
 
   factory :not_dups, class: Work do
-    sequence(:title) {|n| "NOT SAME #{n}"}
-    sequence(:artist_id) {|n| n}
+    sequence(:title) {|n| "NOT SAME #{n+5}"}
+    sequence(:artist_id) {|n| n+5}
   end
 
 end

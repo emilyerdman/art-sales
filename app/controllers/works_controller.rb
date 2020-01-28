@@ -30,41 +30,34 @@ class WorksController < ApplicationController
       @works = get_user_category_works()
 
       if params[:art_type].present? && !current_user.posters?
-        puts 'filtering art type'
         # posters user can't filter by art type
         @works = Work.filterByArtType(@works, params[:art_type])
       end
 
       # only the admin can look at the non-available works
       if params[:availability].present? && current_user.admin?
-        puts 'filtering availability'
         @works = Work.filterByAvailability(@works, params[:availability])
       end
 
       if params[:framed].present? && !params[:framed].eql?('ALL')
-        puts 'filtering framed'
         @works = Work.filterByFramed(@works, params[:framed])
       end
 
       # filter by corporate collection/noncorporate if admin or corp collection user
       if params[:collection].present? && (current_user.admin? || current_user.corporate?) && !params[:collection].eql?('ALL')
-        puts 'filtering collection'
         @works = Work.filterByCollection(@works, params[:collection])
       end
 
       # search causes other filters to reset
       if params[:search].present? 
-        puts 'filtering search'
         @works = Work.searchWorks(@works, params[:search])
       end
 
       if params[:category].present?
-        puts 'filtering category'
-        @works = Work.filterByCategory(@works, params[:category], params[:combo])
+        @works = Work.filterByCategory(@works, params[:category], @category_combo)
       end
 
       if params[:unique].present? && params[:unique].eql?('1')
-        puts 'filtering unique'
         @works = Work.filterUnique(@works)
       end
 
