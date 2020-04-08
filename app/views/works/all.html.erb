@@ -24,13 +24,7 @@
           <div class='control'>
             <label class='label'>Sort By: </label>  <!-- fix the select options so they pass the correct values to the form-->
             <div class='select'>
-              <%= form.select('sort_by', options_for_select([
-              ['Inventory No. (ASC)', 0],
-              ['Inventory No. (DESC)', 1],
-              ['Title (ASC)', 3],
-              ['Title (DESC)', 2],
-              ['Retail Value (ASC)', 5],
-              ['Retail Value (DESC)', 4]], @sort_by)) %>
+              <%= form.select('sort_by', options_for_select(@sort_options, @sort_by)) %>
             </div>
           </div>
           <div class='control'>

@@ -176,6 +176,18 @@ class Work < ApplicationRecord
     return !self.location.blank? && self.location == "2169"
   end
 
+  def self.getSortOptions(current_user)
+    sort_options = [['Inventory No. (ASC)', 0],
+     ['Inventory No. (DESC)', 1],
+     ['Title (ASC)', 3],
+     ['Title (DESC)', 2]]
+    if current_user.admin?
+      sort_options.concat([['Retail Value (ASC)', 5], ['Retail Value (DESC)', 4]])
+    end
+    return sort_options
+  end
+
+
   def self.getPostersWorks()
     # poster user can only see posters (but none are EAG confirmed)
     return Work.all.art_type_filter("POSTER").availability_filter('= 0')

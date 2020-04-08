@@ -25,7 +25,8 @@ class WorksController < ApplicationController
       @sort_by = (params[:sort_by] || 0)
       @works = Work.none
       @page = (params[:page] || 1).to_i
-      @numworks = (params[:numworks] || NUM_WORKS).to_i      
+      @numworks = (params[:numworks] || NUM_WORKS).to_i
+      @sort_options = Work.getSortOptions(current_user)      
 
       @works = get_user_category_works()
 
