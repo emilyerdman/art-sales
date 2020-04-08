@@ -1,5 +1,4 @@
 <section class='section'>
-  <p id="notice"><%= notice %></p>
 
   <h2 class='title'>Your Profile</h2>
   <div class='content'>
@@ -24,6 +23,5 @@
     <p class='subtitle'><strong>Company:</strong> <%= @user.company %></p>
   </div>
 
-  <%= link_to 'Edit', edit_user_path(@user), class: 'button' %>
-  <%= link_to 'Delete', user_path(@user), method: :delete, class: 'button' %>
+  <%= link_to 'Edit Profile', edit_user_path(@user), class: 'button' %>
 </section>
