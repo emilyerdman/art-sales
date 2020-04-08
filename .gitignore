@@ -28,6 +28,9 @@ log
 # ignore database setup
 config/database.yml
 
+# ignore development environment details
+config/environments/development.rb
+
 # ignore database backups
 backups/
 
@@ -50,3 +53,5 @@ config/ssl
 *.xls
 
 
+
+/config/master.key

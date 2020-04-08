@@ -7,11 +7,11 @@ end
 
 ruby '2.5.1'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.6'
+gem 'rails', '>= 5.1.6'
 # Use postgres as the database for Active Record
 gem 'pg'
-# Use Puma as the app server
-gem 'puma', '~> 3.7'
+# Use Puma as the app server (updated version for security concerns)
+gem 'puma', '>=3.12.4'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -32,10 +32,13 @@ gem 'bcrypt', '~> 3.1.7'
 
 
 # updated for security concerns
-gem "actionview", ">= 5.1.6.2"
+gem "actionview", ">= 5.2.4.2"
+gem "rake", ">= 12.3.3"
 gem "rubyzip", ">= 1.3.0"
 gem "ffi", ">= 1.9.24"
-gem "nokogiri", ">= 1.10.4"
+gem "nokogiri", ">= 1.10.8"
+gem "rack", ">= 2.0.8"
+gem "loofah", ">= 2.3.1"
 
 # for recaptcha
 gem "recaptcha", require: "recaptcha/rails"
