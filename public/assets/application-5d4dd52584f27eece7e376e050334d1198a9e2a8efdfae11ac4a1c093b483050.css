@@ -11225,6 +11225,16 @@ label.panel-block:hover {
   background-color: #fafafa;
   padding: 3rem 1.5rem 6rem;
 }
+/* line 1, /Users/emilyerdman/projects/art-sales/app/assets/stylesheets/fix-footer-bottom.scss */
+.main {
+  min-height: calc(100vh - 100px);
+  padding: 40px 40px 40px 40px;
+}
+
+/* line 5, /Users/emilyerdman/projects/art-sales/app/assets/stylesheets/fix-footer-bottom.scss */
+.footer {
+  height: 50px;
+}
 /*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
@@ -11240,4 +11250,3 @@ label.panel-block:hover {
 
 
  */
-
